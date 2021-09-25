@@ -1,0 +1,48 @@
+version: '3'
+services:
+
+# Client
+  client:
+    container_name: client
+    image: java
+    restart: "no"
+#    ports:
+#      - 9000:9000
+    volumes:
+      - ./cs2031:/cs2031
+    networks:
+     - cs2031
+    command: tail -f /dev/null
+
+# Server
+  server:
+    container_name: server
+    image: java
+    restart: "no"
+#    ports:
+#      - 1880:1880
+    volumes:
+      - ./cs2031:/cs2031
+    networks:
+     - cs2031
+    command: tail -f /dev/null
+
+# Broker
+  # broker:
+  #   container_name: broker
+  #   image: java
+  #   restart: "no"
+  #   volumes:
+  #     - ./cs2031:/cs2031
+  #   networks:
+  #    - cs2031
+  #   command: tail -f /dev/null
+
+# Network
+networks:
+  cs2031:
+    ipam:
+      driver: default
+      config:
+        - subnet: 70.20.0.0/16
+#      gateway: 70.28.5.254
