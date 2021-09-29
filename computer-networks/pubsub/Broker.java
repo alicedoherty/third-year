@@ -65,25 +65,29 @@ public class Broker {
                 // print data and end of program
                 System.out.println("Data: " + data);
 
-
-                
                 bstream2= new ByteArrayOutputStream();
-				ostream2= new ObjectOutputStream(bstream2);
-	
-				ostream2.writeUTF("data");
+                ostream2= new ObjectOutputStream(bstream2);
 
-				ostream2.flush();
-				buffer2= bstream2.toByteArray();
-	
+                // sending data onto subscriber
+                String[] splitData = data.split("\\s+");
 
-                InetAddress subscriberAddress = InetAddress.getByName("192.168.10.30");
-				// create packet addressed to destination
-				packet2= new DatagramPacket(buffer2, buffer2.length,
-						subscriberAddress, port);
-	
-				// create socket and send packet
-				socket2= new DatagramSocket();
-				socket2.send(packet2);
+                if (splitData[0].equals("temp")) {
+                    
+                    ostream2.writeUTF(splitData[1]);
+
+                    ostream2.flush();
+                    buffer2= bstream2.toByteArray();
+        
+    
+                    InetAddress subscriberAddress = InetAddress.getByName("192.168.10.30");
+                    // create packet addressed to destination
+                    packet2= new DatagramPacket(buffer2, buffer2.length,
+                            subscriberAddress, port);
+        
+                    // create socket and send packet
+                    socket2= new DatagramSocket();
+                    socket2.send(packet2);
+                }
             }  
             System.out.println("Broker - Program end");
         }

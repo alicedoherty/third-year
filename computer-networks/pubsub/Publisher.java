@@ -22,7 +22,7 @@ public class Publisher {
 
 		DatagramPacket packet;
 		DatagramSocket socket;
-		InetAddress address;
+		InetAddress brokerAddress;
 		int port;
 
 		ObjectOutputStream ostream;
@@ -34,7 +34,7 @@ public class Publisher {
 			System.out.println("Publisher - Program start");
 
 			// extract destination from arguments
-			InetAddress brokerAddress= InetAddress.getByName("192.168.10.20");   // InetAddress.getByName(args[0]);
+			brokerAddress= InetAddress.getByName("192.168.10.20");   // InetAddress.getByName(args[0]);
 			port= DEST_PORT;                       // Integer.parseInt(args[1]);
 
 			Random rand = new Random();
@@ -49,6 +49,7 @@ public class Publisher {
 				ostream= new ObjectOutputStream(bstream);
 	
 				ostream.writeUTF("temp " + randomInt);
+
 				ostream.flush();
 				buffer= bstream.toByteArray();
 	
