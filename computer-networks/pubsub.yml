@@ -1,0 +1,51 @@
+version: '3'
+services:
+
+# Publisher
+  publisher:
+    container_name: publisher
+    image: java
+    restart: "no"
+#    ports:
+#      - 9000:9000
+    volumes:
+      - ./pubsub:/pubsub
+    networks:
+     pubsub:
+       ipv4_address: 192.168.10.10
+    command: tail -f /dev/null
+
+# Broker
+  broker:
+    container_name: broker
+    image: java
+    restart: "no"
+#    ports:
+#      - 1880:1880
+    volumes:
+      - ./pubsub:/pubsub
+    networks:
+     pubsub:
+       ipv4_address: 192.168.10.20
+    command: tail -f /dev/null
+
+# Subscriber
+  subscriber:
+    container_name: subscriber
+    image: java
+    restart: "no"
+    volumes:
+      - ./pubsub:/pubsub
+    networks:
+     pubsub:
+       ipv4_address: 192.168.10.30
+    command: tail -f /dev/null
+
+# Network
+networks:
+  pubsub:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.10.0/24
+#      gateway: 70.28.5.254
