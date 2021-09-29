@@ -6,6 +6,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Publisher {
 
@@ -40,15 +41,21 @@ public class Publisher {
 			Random rand = new Random();
 			int upperBound = 10;
 
+			Scanner input = new Scanner(System.in);
+
 			for(int i = 0; i < 5; i++) {
 
-				int randomInt = rand.nextInt(upperBound);
+				System.out.println("Enter data: ");
+				String data = input.nextLine();
+
+				// int randomInt = rand.nextInt(upperBound);
 
 				// convert string "Hello World" to byte array
 				bstream= new ByteArrayOutputStream();
 				ostream= new ObjectOutputStream(bstream);
 	
-				ostream.writeUTF("temp " + randomInt);
+				// ostream.writeUTF("temp " + randomInt);
+				ostream.writeUTF(data);
 
 				ostream.flush();
 				buffer= bstream.toByteArray();
@@ -60,6 +67,13 @@ public class Publisher {
 				// create socket and send packet
 				socket= new DatagramSocket();
 				socket.send(packet);
+				// String sampleData = "temp 20";
+				// socket = new DatagramSocket();
+				// byte[] buf = new byte[sampleData.length()];
+				// buf = sampleData.getBytes();
+				// packet = new DatagramPacket(buf, buf.length, brokerAddress, port);
+
+				// socket.send(packet);
 			}
 
 

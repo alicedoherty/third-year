@@ -73,7 +73,7 @@ public class Broker {
 
                 if (splitData[0].equals("temp")) {
                     
-                    ostream2.writeUTF(splitData[1]);
+                    ostream2.writeUTF(data);
 
                     ostream2.flush();
                     buffer2= bstream2.toByteArray();
