@@ -41,21 +41,29 @@ public class Publisher {
 			Random rand = new Random();
 			int upperBound = 10;
 
-			Scanner input = new Scanner(System.in);
+			// Scanner input = new Scanner(System.in);
 
-			for(int i = 0; i < 5; i++) {
+			for(int i = 0; i < 10; i++) {
 
-				System.out.println("Enter data: ");
-				String data = input.nextLine();
+				// System.out.println("Enter data: ");
+				// String data = input.nextLine();
 
-				// int randomInt = rand.nextInt(upperBound);
+				int randomInt = rand.nextInt(upperBound);
 
 				// convert string "Hello World" to byte array
 				bstream= new ByteArrayOutputStream();
 				ostream= new ObjectOutputStream(bstream);
 	
-				// ostream.writeUTF("temp " + randomInt);
-				ostream.writeUTF(data);
+				if(i % 3 == 0) {
+					ostream.writeUTF("humidity " + randomInt);
+					System.out.println("Sending: humidity " + randomInt);
+				}
+				else {
+					ostream.writeUTF("temperature " + randomInt);
+					System.out.println("Sending: temperature " + randomInt);
+				}
+
+				// ostream.writeUTF(data);
 
 				ostream.flush();
 				buffer= bstream.toByteArray();
@@ -74,10 +82,11 @@ public class Publisher {
 				// packet = new DatagramPacket(buf, buf.length, brokerAddress, port);
 
 				// socket.send(packet);
+				Thread.sleep(1000);
 			}
 
 
-			System.out.println("Publisher - Program end");
+			// System.out.println("Publisher - Program end");
 		}
 		catch(Exception e) {
 			e.printStackTrace();

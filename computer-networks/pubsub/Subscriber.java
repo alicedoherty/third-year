@@ -31,6 +31,7 @@ public class Subscriber {
 
         try {
             System.out.println("Subscriber - Program start");
+            System.out.println("Subscribed to topic(s): \"temperature\"");
 
             // extract destination from arguments
             address= InetAddress.getByName("192.168.10.30"); // InetAddress.getByName(args[0]);
@@ -41,9 +42,9 @@ public class Subscriber {
             packet= new DatagramPacket(buffer, buffer.length);
             socket= new DatagramSocket(port, address);
 
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 10; i++) {
                 // attempt to receive packet
-                System.out.println("Trying to receive");
+               //  System.out.println("Trying to receive");
                 socket.receive(packet);
 
                 // extract data from packet
@@ -52,9 +53,13 @@ public class Subscriber {
                 ostream= new ObjectInputStream(bstream);
 
                 // print data and end of program
-                System.out.println("Data: " + ostream.readUTF());
+                String data = ostream.readUTF();
+                System.out.println("Data received. ");
+                String[] splitData = data.split("\\s+");
+                System.out.println("Data: " + data);
+                System.out.println("Topic: " + splitData[0] + ", payload: " + splitData[1]);
             }  
-            System.out.println("Subscriber - Program end"); 
+            //System.out.println("Subscriber - Program end"); 
         }
         catch(Exception e) {
             e.printStackTrace();

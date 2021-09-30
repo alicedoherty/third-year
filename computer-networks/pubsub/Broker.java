@@ -50,9 +50,9 @@ public class Broker {
             subscriberMap = new HashMap<String, String>();
             subscriberMap.put("temp", "192.168.10.30");
 
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 10; i++) {
                 // attempt to receive packet
-                System.out.println("Trying to receive");
+                // System.out.println("Trying to receive");
                 socket.receive(packet);
 
                 // extract data from packet
@@ -71,7 +71,7 @@ public class Broker {
                 // sending data onto subscriber
                 String[] splitData = data.split("\\s+");
 
-                if (splitData[0].equals("temp")) {
+                if (splitData[0].equals("temperature")) {
                     
                     ostream2.writeUTF(data);
 
@@ -89,7 +89,7 @@ public class Broker {
                     socket2.send(packet2);
                 }
             }  
-            System.out.println("Broker - Program end");
+            //System.out.println("Broker - Program end");
         }
         catch(Exception e) {
             e.printStackTrace();
