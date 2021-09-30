@@ -54,9 +54,9 @@ public class Subscriber {
 
                 // print data and end of program
                 String data = ostream.readUTF();
-                System.out.println("Data received. ");
+                System.out.println("Data \"" +  data + "\" received. ");
                 String[] splitData = data.split("\\s+");
-                System.out.println("Data: " + data);
+                // System.out.println("Data: " + data);
                 System.out.println("Topic: " + splitData[0] + ", payload: " + splitData[1]);
             }  
             //System.out.println("Subscriber - Program end"); 
