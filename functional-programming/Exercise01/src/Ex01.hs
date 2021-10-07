@@ -72,9 +72,3 @@ runs (x:y:ys) = let (head:tail) = runs (y:ys)
                  in if x /= y
                     then [x]:head:tail
                     else (x:head):tail
-
--- runs = foldr f []
---   where f x [] = [[x]]
---         f x (ys@(y:_):yss)
---           | x == y = (x:ys):yss
---           | otherwise = [x]:ys:yss
