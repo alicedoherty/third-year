@@ -1,2 +1,2 @@
 module TestFunction where
-    test = (!!)
+    test = span

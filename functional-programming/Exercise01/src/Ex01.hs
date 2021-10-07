@@ -64,5 +64,17 @@ HINT: Don't worry about code efficiency
        Seriously, don't!
 
 -}
+
 runs :: Eq a => [a] -> [[a]]
-runs xs = undefined
+runs [] = []
+runs [x] = [[x]]
+runs (x:y:ys) = let (head:tail) = runs (y:ys)
+                 in if x /= y
+                    then [x]:head:tail
+                    else (x:head):tail
+
+-- runs = foldr f []
+--   where f x [] = [[x]]
+--         f x (ys@(y:_):yss)
+--           | x == y = (x:ys):yss
+--           | otherwise = [x]:ys:yss
