@@ -1,0 +1,2 @@
+module TestFunction where
+    test = (!!)

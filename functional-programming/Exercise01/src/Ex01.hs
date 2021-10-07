@@ -2,9 +2,9 @@ module Ex01 where
 import Data.Char (toUpper)
 
 name, idno, username :: String
-name      =  "Myself, Me"  -- replace with your name
-idno      =  "01234567"    -- replace with your student id
-username  =  "memyselfi"   -- replace with your TCD username
+name      =  "Alice Doherty"  -- replace with your name
+idno      =  "19333356"    -- replace with your student id
+username  =  "aldohert"   -- replace with your TCD username
 
 
 declaration -- do not modify this
@@ -26,7 +26,7 @@ It is imported should you want to use it.
 
 -}
 raise :: String -> String
-raise str = undefined
+raise = map toUpper
 
 {- Part 2
 
@@ -35,8 +35,7 @@ Hint: the test will answer your Qs
 
 -}
 nth :: Int -> [a] -> a
-nth i xs = undefined
-
+nth i xs = xs !! (i - 1)
 
 {- Part 3
 
@@ -45,7 +44,8 @@ and reports the length of the prefix they have in common.
 
 -}
 commonLen :: Eq a => [a] -> [a] -> Int
-commonLen xs ys = undefined
+commonLen (x:xs) (y:ys) | x == y = commonLen xs ys + 1
+commonLen _ _ = 0 
 
 {- Part 4
 
