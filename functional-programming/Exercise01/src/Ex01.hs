@@ -26,7 +26,7 @@ It is imported should you want to use it.
 
 -}
 raise :: String -> String
-raise = map toUpper
+raise str = map toUpper str
 
 {- Part 2
 
