@@ -37,7 +37,7 @@ public class Broker extends Node {
                     break;
                 case SUBSCRIBE:
                     System.out.println("Received request to subscribe.");
-                    // subscribe();
+                    subscribe(packet);
                     break;
                 default:
                     System.out.println("Unexpected packet" + packet.toString());
@@ -49,8 +49,6 @@ public class Broker extends Node {
 
     // Sender code - publish code
     public synchronized void sendMessage(DatagramPacket receivedPacket) throws Exception {
-        // String input= "humidity 20";
-
         byte[] receivedData = receivedPacket.getData();
         byte[] buffer = new byte[receivedData[LENGTH_POS]];
 		System.arraycopy(receivedData, HEADER_LENGTH, buffer, 0, buffer.length);
@@ -66,20 +64,10 @@ public class Broker extends Node {
 
         System.out.println("Sending packet...");
 
-        // dstAddress = new InetSocketAddress(DEFAULT_DST, SUB_PORT);
-
-
-
-        // subscriberTable.put(setTopic, subscribers);
-
-        // Should be in subscribe()
-
         String[] splitContent = content.split("\\s+");
         String topic = splitContent[0];
         System.out.println("Topic is: " + topic);
         if(topic.equals("temperature")){
-            
-
             InetSocketAddress dstAddress = subscriberMap.get(topic);
             // dstAddress = dstAddresses[0];
     
@@ -93,19 +81,27 @@ public class Broker extends Node {
 
 	}
 
-    // private void subscribe() {
-    //     String topic = "temperature";
-    //     ArrayList<InetSocketAddress> subscribers = subscriberTable.get(topic);
-    //     InetSocketAddress subscriberAddr = new InetSocketAddress(DEFAULT_DST, SUB_PORT);
-    //     subscribers.add(subscriberAddr);
-    //     subscriberTable.put(topic, subscribers);
-    // }
+    // getTopic() function to implement
+
+    private void subscribe(DatagramPacket packet) {
+        InetSocketAddress subscriberAddr = (InetSocketAddress) packet.getSocketAddress();
+
+        byte[] data = packet.getData();
+        byte[] buffer = new byte[data[LENGTH_POS]];
+		System.arraycopy(data, HEADER_LENGTH, buffer, 0, buffer.length);
+		String topic = new String(buffer);
+
+
+        subscriberMap.put(topic, subscriberAddr);
+        System.out.println("Subscription to " + topic + " added.");
+    }
 
     public synchronized void start() throws Exception {
 		System.out.println("Waiting for contact");
-        System.out.println("Subscription added");
-        InetSocketAddress subscriberAddr = new InetSocketAddress(DEFAULT_DST, SUB_PORT);
-        subscriberMap.put("temperature", subscriberAddr);
+        
+        // InetSocketAddress subscriberAddr = new InetSocketAddress(DEFAULT_DST, SUB_PORT);
+        // subscriberMap.put("temperature", subscriberAddr);
+        // System.out.println("Subscription added");
         //subscribe();
 		while (true) {
 			this.wait();

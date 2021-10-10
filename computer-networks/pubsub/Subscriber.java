@@ -2,11 +2,14 @@
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
 
 public class Subscriber extends Node {
+	InetSocketAddress dstAddress;
 
 	Subscriber() {
 		try {
+			dstAddress = new InetSocketAddress(DEFAULT_DST, BKR_PORT);
 			socket= new DatagramSocket(SUB_PORT);
 			listener.go();
 		}
@@ -45,9 +48,25 @@ public class Subscriber extends Node {
 		catch(Exception e) {e.printStackTrace();}
 	}
 
+	public synchronized void sendMessage(String message) throws Exception {
+		byte[] buffer = message.getBytes();
+		byte[] data = new byte[HEADER_LENGTH + buffer.length];
+
+		data[TYPE_POS] = SUBSCRIBE;
+		data[LENGTH_POS] = (byte) buffer.length;
+		System.arraycopy(buffer, 0, data, HEADER_LENGTH, buffer.length);
+
+		System.out.println("Sending subscribe request packet...");
+		DatagramPacket packet = new DatagramPacket(data, data.length, dstAddress);
+		socket.send(packet);
+		System.out.println("Packet sent");
+		// this.wait();
+	}
 
 	public synchronized void start() throws Exception {
 		System.out.println("Waiting for contact");
+		System.out.println("Sending request to subscribe to \"temperature\"");
+		sendMessage("temperature");
 		this.wait();
 	}
 	public static void main(String[] args) {
