@@ -1,24 +1,14 @@
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Broker extends Node {
-    // static final int HEADER_LENGTH = 2; // Fixed length of the header
-	// static final int TYPE_POS = 0; // Position of the type within the header
-
-	// static final byte TYPE_UNKNOWN = 0;
-
-	// static final byte TYPE_STRING = 1; // Indicating a string payload
-	// static final int LENGTH_POS = 1;
-
-	// static final byte TYPE_ACK = 2;   // Indicating an acknowledgement
-	// static final int ACKCODE_POS = 1; // Position of the acknowledgement type in the header
-	// static final byte ACK_ALLOK = 10; // Inidcating that everything is ok
-
-    // static final int DEFAULT_PORT = 50001;
-
-    // private Map<String, ArrayList<InetSocketAddress>> subscriberMap;
+    // private Map<String, ArrayList<InetSocketAddress>> subscriberTable;
     InetSocketAddress dstAddress;
+    private Map<String, InetSocketAddress> subscriberMap;
     
     Broker() {
 		try {
@@ -27,40 +17,27 @@ public class Broker extends Node {
 			listener.go();
 		}
 		catch(java.lang.Exception e) {e.printStackTrace();}
-        // subscriberMap = new HashMap<String, ArrayList<InetSocketAddress>>();
+        // subscriberTable = new HashMap<String, ArrayList<InetSocketAddress>>();
+        //Map<String, InetSocketAddress> subscriberMap;
+        subscriberMap = new HashMap<String, InetSocketAddress>();
+        //subscriberMap.put("temp", "192.168.10.30");
 	}
 
     // Receiver code
     public synchronized void onReceipt(DatagramPacket packet) {
         try {
             System.out.println("Received packet");
-
-            // String content;
-            byte[] data;
-           // byte[] buffer;
     
-            data = packet.getData();
+            byte[] data = packet.getData();
     
             switch(data[TYPE_POS]) {
                 case PUBLISH:
                     System.out.println("Received request to publish.");
-                    sendMessage();
-                    // this.notify();
-                    // buffer= new byte[data[LENGTH_POS]];
-                    // System.arraycopy(data, HEADER_LENGTH, buffer, 0, buffer.length);
-                    // content= new String(buffer);
-                    // System.out.println("|" + content + "|");
-                    // System.out.println("Length: " + content.length());
-                    // // You could test here if the String says "end" and terminate the
-                    // // program with a "this.notify()" that wakes up the start() method.
-                    // data = new byte[HEADER_LENGTH];
-                    // data[TYPE_POS] = TYPE_ACK;
-                    // data[ACKCODE_POS] = ACK_ALLOK;
-                    
-                    // DatagramPacket response;
-                    // response = new DatagramPacket(data, data.length);
-                    // response.setSocketAddress(packet.getSocketAddress());
-                    // socket.send(response);
+                    sendMessage(packet);
+                    break;
+                case SUBSCRIBE:
+                    System.out.println("Received request to subscribe.");
+                    // subscribe();
                     break;
                 default:
                     System.out.println("Unexpected packet" + packet.toString());
@@ -68,41 +45,68 @@ public class Broker extends Node {
 
         }
         catch(Exception e) {e.printStackTrace();}
-		// PacketContent content= PacketContent.fromDatagramPacket(packet);
-
-		// System.out.println(content.toString());
-		// this.notify();
-
 	}
 
     // Sender code - publish code
-    public synchronized void sendMessage() throws Exception {
-        byte[] data = null;
-        byte[] buffer= null;
-		DatagramPacket packet= null;
-		String input;
+    public synchronized void sendMessage(DatagramPacket receivedPacket) throws Exception {
+        // String input= "humidity 20";
 
-        input= "humidity 20";
-        buffer = input.getBytes();
-        data = new byte[HEADER_LENGTH+buffer.length];
+        byte[] receivedData = receivedPacket.getData();
+        byte[] buffer = new byte[receivedData[LENGTH_POS]];
+		System.arraycopy(receivedData, HEADER_LENGTH, buffer, 0, buffer.length);
+		String content = new String(buffer);
+
+        byte[] buffer2 = content.getBytes();
+        byte[] data = new byte[HEADER_LENGTH+buffer2.length];
         data[TYPE_POS] = PUBLISH;
-        data[LENGTH_POS] = (byte)buffer.length;
-        System.arraycopy(buffer, 0, data, HEADER_LENGTH, buffer.length);
+        data[LENGTH_POS] = (byte)buffer2.length;
+        System.arraycopy(buffer2, 0, data, HEADER_LENGTH, buffer2.length);
+
+        // byte[] data = receivedPacket.getData();
 
         System.out.println("Sending packet...");
 
-        dstAddress = new InetSocketAddress(DEFAULT_DST, SUB_PORT);
+        // dstAddress = new InetSocketAddress(DEFAULT_DST, SUB_PORT);
 
-        packet= new DatagramPacket(data, data.length, dstAddress);
 
-        // packet.setSocketAddress(dstAddress);
-        socket.send(packet);
-        System.out.println("Packet sent");
-        this.wait();
+
+        // subscriberTable.put(setTopic, subscribers);
+
+        // Should be in subscribe()
+
+        String[] splitContent = content.split("\\s+");
+        String topic = splitContent[0];
+        System.out.println("Topic is: " + topic);
+        if(topic.equals("temperature")){
+            
+
+            InetSocketAddress dstAddress = subscriberMap.get(topic);
+            // dstAddress = dstAddresses[0];
+    
+            DatagramPacket packet= new DatagramPacket(data, data.length, dstAddress);
+    
+            // packet.setSocketAddress(dstAddress);
+            socket.send(packet);
+            System.out.println("Packet sent");
+            // this.wait();
+        }
+
 	}
+
+    // private void subscribe() {
+    //     String topic = "temperature";
+    //     ArrayList<InetSocketAddress> subscribers = subscriberTable.get(topic);
+    //     InetSocketAddress subscriberAddr = new InetSocketAddress(DEFAULT_DST, SUB_PORT);
+    //     subscribers.add(subscriberAddr);
+    //     subscriberTable.put(topic, subscribers);
+    // }
 
     public synchronized void start() throws Exception {
 		System.out.println("Waiting for contact");
+        System.out.println("Subscription added");
+        InetSocketAddress subscriberAddr = new InetSocketAddress(DEFAULT_DST, SUB_PORT);
+        subscriberMap.put("temperature", subscriberAddr);
+        //subscribe();
 		while (true) {
 			this.wait();
 		}

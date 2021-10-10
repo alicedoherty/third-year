@@ -24,6 +24,11 @@ public abstract class Node {
 	static final byte UNSUBSCRIBE = 10;
 	static final byte UNSUBACK = 11;
 
+	// static final byte TYPE_ACK = 2; // Indicating an acknowledgement
+	// static final int ACKCODE_POS = 1; // Position of the acknowledgement type in
+	// the header
+	// static final byte ACK_ALLOK = 10; // Inidcating that everything is ok
+
 	DatagramSocket socket;
 	Listener listener;
 	CountDownLatch latch;
