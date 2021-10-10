@@ -4,6 +4,7 @@ import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Publisher extends Node {
 	InetSocketAddress dstAddress;
@@ -44,7 +45,7 @@ public class Publisher extends Node {
 		data[LENGTH_POS] = (byte) buffer.length;
 		System.arraycopy(buffer, 0, data, HEADER_LENGTH, buffer.length);
 
-		System.out.println("Sending packet...");
+		System.out.println("Sending packet to broker...");
 		DatagramPacket packet = new DatagramPacket(data, data.length, dstAddress);
 		socket.send(packet);
 		System.out.println("Packet sent");
@@ -54,26 +55,40 @@ public class Publisher extends Node {
 	private void start() throws Exception {
 		System.out.println("Publisher program starting...");
 
-		Random rand = new Random();
-		int upperBound = 50;
+		Scanner scanner = new Scanner(System.in);
+		boolean finished = false;
+		while(!finished) {
+			System.out.println("Enter data to be published (topic:payload): ");
 
-		for(int i = 0; i < 20; i++) {
-			int randomInt = rand.nextInt(upperBound);
+			String input = scanner.nextLine();
 
-			if(i % 3 == 0) {
-				sendMessage("humidity " + randomInt);
-			} 
-			else {
-				sendMessage("temperature " + randomInt);
-			}
-			Thread.sleep(2000);
+			if(input.equalsIgnoreCase("quit")) {
+				finished = true;
+			} else {
+				sendMessage(input);
+			}	
 		}
+
+		// Random rand = new Random();
+		// int upperBound = 50;
+
+		// for(int i = 0; i < 20; i++) {
+		// 	int randomInt = rand.nextInt(upperBound);
+
+		// 	if(i % 3 == 0) {
+		// 		sendMessage("humidity " + randomInt);
+		// 	} 
+		// 	else {
+		// 		sendMessage("temperature " + randomInt);
+		// 	}
+		// 	Thread.sleep(2000);
+		// }
 	}
 
 	public static void main(String[] args) {
 		try {
 			(new Publisher()).start();
-			System.out.println("Program completed");
+			System.out.println("Publisher program completed.");
 		} catch (java.lang.Exception e) {
 			e.printStackTrace();
 		}

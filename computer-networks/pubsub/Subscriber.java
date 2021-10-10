@@ -3,6 +3,7 @@
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.util.Scanner;
 
 public class Subscriber extends Node {
 	InetSocketAddress dstAddress;
@@ -39,6 +40,7 @@ public class Subscriber extends Node {
 					// response.setSocketAddress(packet.getSocketAddress());
 					// socket.send(response);
 					// System.out.println("New publication: " + getMessage(data));
+					// System.out.println("Enter topic to subscribe to: ");
 					break;
 				default:
 					System.out.println("Unexpected packet" + packet.toString());
@@ -48,7 +50,7 @@ public class Subscriber extends Node {
 		catch(Exception e) {e.printStackTrace();}
 	}
 
-	public synchronized void sendMessage(String message) throws Exception {
+	public synchronized void sendSubscriptionRequest(String message) throws Exception {
 		byte[] buffer = message.getBytes();
 		byte[] data = new byte[HEADER_LENGTH + buffer.length];
 
@@ -64,15 +66,29 @@ public class Subscriber extends Node {
 	}
 
 	public synchronized void start() throws Exception {
-		System.out.println("Waiting for contact");
-		System.out.println("Sending request to subscribe to \"temperature\"");
-		sendMessage("temperature");
+		// System.out.println("Waiting for contact");
+		System.out.println("Subscriber program starting...");
+		// System.out.println("Sending request to subscribe to \"temperature\"");
+
+		Scanner scanner = new Scanner(System.in);
+		boolean finished = false;
+
+		while(!finished) {
+			System.out.println("Enter topic to subscribe to: ");
+			String input = scanner.nextLine();
+
+			if(input.equalsIgnoreCase("quit")) {
+				finished = true;
+			} else {
+				sendSubscriptionRequest(input);
+			}
+		}
 		this.wait();
 	}
 	public static void main(String[] args) {
 		try {
 			(new Subscriber()).start();
-			System.out.println("Program completed");
+			System.out.println("Subscriber program completed.");
 		} catch(java.lang.Exception e) {e.printStackTrace();}
 	}
 }

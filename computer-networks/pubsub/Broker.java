@@ -26,9 +26,8 @@ public class Broker extends Node {
     // Receiver code
     public synchronized void onReceipt(DatagramPacket packet) {
         try {
-            System.out.println("Received packet");
-    
             byte[] data = packet.getData();
+            // System.out.println("Received packet...");
     
             switch(data[TYPE_POS]) {
                 case PUBLISH:
@@ -40,7 +39,7 @@ public class Broker extends Node {
                     subscribe(packet);
                     break;
                 default:
-                    System.out.println("Unexpected packet" + packet.toString());
+                    System.out.println("Received unexpected packet" + packet.toString());
             }
 
         }
@@ -61,13 +60,14 @@ public class Broker extends Node {
         System.arraycopy(buffer2, 0, data, HEADER_LENGTH, buffer2.length);
 
         // byte[] data = receivedPacket.getData();
+        System.out.println("Publishing packet: " + content);
+       //  System.out.println("Sending packet...");
 
-        System.out.println("Sending packet...");
-
-        String[] splitContent = content.split("\\s+");
+        String[] splitContent = content.split(":");
         String topic = splitContent[0];
         System.out.println("Topic is: " + topic);
-        if(topic.equals("temperature")){
+        //if(topic.equals("temperature"));
+        if(subscriberMap.containsKey(topic)) {
             InetSocketAddress dstAddress = subscriberMap.get(topic);
             // dstAddress = dstAddresses[0];
     
