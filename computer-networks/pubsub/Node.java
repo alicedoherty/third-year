@@ -5,6 +5,24 @@ import java.util.concurrent.CountDownLatch;
 
 public abstract class Node {
 	static final int PACKETSIZE = 65536;
+	static final String DEFAULT_DST = "localhost";
+
+	// Port numbers
+	static final int PUB_PORT = 50000;
+	static final int BKR_PORT = 50001;
+	static final int SUB_PORT = 50002;
+
+	static final int HEADER_LENGTH = 2; // Fixed length of the header
+	static final int TYPE_POS = 0; // Position of the type within the header
+	static final int LENGTH_POS = 1;
+
+	// Packet types
+	static final byte PUBLISH = 3;
+	static final byte PUBACK = 4;
+	static final byte SUBSCRIBE = 8;
+	static final byte SUBACK = 9;
+	static final byte UNSUBSCRIBE = 10;
+	static final byte UNSUBACK = 11;
 
 	DatagramSocket socket;
 	Listener listener;
