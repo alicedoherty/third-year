@@ -10,7 +10,8 @@ public class Subscriber extends Node {
 
 	Subscriber() {
 		try {
-			dstAddress = new InetSocketAddress(DEFAULT_DST, BKR_PORT);
+			// dstAddress = new InetSocketAddress(DEFAULT_DST, BKR_PORT);
+			dstAddress = new InetSocketAddress("broker", BKR_PORT);
 			socket= new DatagramSocket(SUB_PORT);
 			listener.go();
 		}
@@ -24,6 +25,10 @@ public class Subscriber extends Node {
 
 			switch(data[TYPE_POS]) {
 				case PUBLISH:
+					// byte[] data = packet.getData()
+					// System.arraycopy(data, 1)
+
+
 					byte[] buffer = new byte[data[LENGTH_POS]];
 					System.arraycopy(data, HEADER_LENGTH, buffer, 0, buffer.length);
 					String content = new String(buffer);
