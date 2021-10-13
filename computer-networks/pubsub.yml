@@ -10,9 +10,9 @@ services:
 #      - 9000:9000
     volumes:
       - ./pubsub:/pubsub
-    networks:
-     pubsub:
-       ipv4_address: 192.168.10.10
+    # networks:
+    #  pubsub:
+    #    ipv4_address: 192.168.10.10
     command: tail -f /dev/null
 
 # Broker
@@ -24,9 +24,9 @@ services:
 #      - 1880:1880
     volumes:
       - ./pubsub:/pubsub
-    networks:
-     pubsub:
-       ipv4_address: 192.168.10.20
+    # networks:
+    #  pubsub:
+    #    ipv4_address: 192.168.10.20
     command: tail -f /dev/null
 
 # Subscriber
@@ -36,9 +36,9 @@ services:
     restart: "no"
     volumes:
       - ./pubsub:/pubsub
-    networks:
-     pubsub:
-       ipv4_address: 192.168.10.30
+    # networks:
+    #  pubsub:
+    #    ipv4_address: 192.168.10.30
     command: tail -f /dev/null
 
 # https://hub.docker.com/r/linuxserver/wireshark
