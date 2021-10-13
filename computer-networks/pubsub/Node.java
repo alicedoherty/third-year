@@ -4,7 +4,7 @@ import java.net.SocketException;
 import java.util.concurrent.CountDownLatch;
 
 public abstract class Node {
-	static final int PACKETSIZE = 65536;
+	static final int PACKETSIZE = 65000;
 	static final String DEFAULT_DST = "localhost";
 
 	// Port numbers
@@ -42,6 +42,21 @@ public abstract class Node {
 
 
 	public abstract void onReceipt(DatagramPacket packet);
+
+	protected byte[] getDataByteArray(String message) {
+		byte[] buffer = message.getBytes();
+		byte[] data = new byte[HEADER_LENGTH + buffer.length];
+		data[LENGTH_POS] = (byte) buffer.length;
+		System.arraycopy(buffer, 0, data, HEADER_LENGTH, buffer.length);
+		return data;
+	}
+
+	protected String getStringData(byte[] data) {
+        byte[] buffer = new byte[data[LENGTH_POS]];
+		System.arraycopy(data, HEADER_LENGTH, buffer, 0, buffer.length);
+		String string = new String(buffer);
+		return string;
+	}
 
 	/**
 	 *

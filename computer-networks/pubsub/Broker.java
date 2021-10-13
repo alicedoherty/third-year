@@ -3,41 +3,37 @@ import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Broker extends Node {
-    // private Map<String, ArrayList<InetSocketAddress>> subscriberTable;
     InetSocketAddress dstAddress;
-    private Map<String, InetSocketAddress> subscriberMap;
+    private Map<String, HashSet<InetSocketAddress>> subscriberMap;
     
     Broker() {
 		try {
-			// dstAddress= new InetSocketAddress(dstHost, dstPort);
 			socket= new DatagramSocket(BKR_PORT);
 			listener.go();
 		}
 		catch(java.lang.Exception e) {e.printStackTrace();}
-        // subscriberTable = new HashMap<String, ArrayList<InetSocketAddress>>();
-        //Map<String, InetSocketAddress> subscriberMap;
-        subscriberMap = new HashMap<String, InetSocketAddress>();
-        //subscriberMap.put("temp", "192.168.10.30");
+        subscriberMap = new HashMap<String, HashSet<InetSocketAddress>>();
 	}
 
     // Receiver code
     public synchronized void onReceipt(DatagramPacket packet) {
         try {
             byte[] data = packet.getData();
-            // System.out.println("Received packet...");
-    
             switch(data[TYPE_POS]) {
                 case PUBLISH:
                     System.out.println("Received request to publish.");
-                    sendMessage(packet);
+                    sendMessage(data);
                     break;
                 case SUBSCRIBE:
                     System.out.println("Received request to subscribe.");
-                    subscribe(packet);
+                    subscribe(data, packet);
                     break;
+                case UNSUBSCRIBE:
+                    System.out.println("Received request to unsubscribe");
+                    unsubscribe(data, packet);
                 default:
                     System.out.println("Received unexpected packet" + packet.toString());
             }
@@ -47,17 +43,17 @@ public class Broker extends Node {
 	}
 
     // Sender code - publish code
-    public synchronized void sendMessage(DatagramPacket receivedPacket) throws Exception {
-        byte[] receivedData = receivedPacket.getData();
+    public synchronized void sendMessage(byte[] receivedData) throws Exception {
+        // byte[] receivedData = receivedPacket.getData();
         byte[] buffer = new byte[receivedData[LENGTH_POS]];
 		System.arraycopy(receivedData, HEADER_LENGTH, buffer, 0, buffer.length);
 		String content = new String(buffer);
 
-        byte[] buffer2 = content.getBytes();
-        byte[] data = new byte[HEADER_LENGTH+buffer2.length];
-        data[TYPE_POS] = PUBLISH;
-        data[LENGTH_POS] = (byte)buffer2.length;
-        System.arraycopy(buffer2, 0, data, HEADER_LENGTH, buffer2.length);
+        // byte[] buffer2 = content.getBytes();
+        // byte[] data = new byte[HEADER_LENGTH+buffer2.length];
+        // data[TYPE_POS] = PUBLISH;
+        // data[LENGTH_POS] = (byte)buffer2.length;
+        // System.arraycopy(buffer2, 0, data, HEADER_LENGTH, buffer2.length);
 
         // byte[] data = receivedPacket.getData();
         System.out.println("Publishing packet: " + content);
@@ -66,12 +62,11 @@ public class Broker extends Node {
         String[] splitContent = content.split(":");
         String topic = splitContent[0];
         System.out.println("Topic is: " + topic);
-        //if(topic.equals("temperature"));
         if(subscriberMap.containsKey(topic)) {
             InetSocketAddress dstAddress = subscriberMap.get(topic);
             // dstAddress = dstAddresses[0];
     
-            DatagramPacket packet= new DatagramPacket(data, data.length, dstAddress);
+            DatagramPacket packet= new DatagramPacket(receivedData, receivedData.length, dstAddress);
     
             // packet.setSocketAddress(dstAddress);
             socket.send(packet);
@@ -83,17 +78,20 @@ public class Broker extends Node {
 
     // getTopic() function to implement
 
-    private void subscribe(DatagramPacket packet) {
+    private void subscribe(byte[] data, DatagramPacket packet) {
         InetSocketAddress subscriberAddr = (InetSocketAddress) packet.getSocketAddress();
 
-        byte[] data = packet.getData();
-        byte[] buffer = new byte[data[LENGTH_POS]];
-		System.arraycopy(data, HEADER_LENGTH, buffer, 0, buffer.length);
-		String topic = new String(buffer);
+        String topic = getStringData(data);
 
+        // add checks if they've already subscribed
 
         subscriberMap.put(topic, subscriberAddr);
         System.out.println("Subscription to " + topic + " added.");
+    }
+
+    private void unsubscribe(byte[] data, DatagramPacket packet) {
+        String topic = getStringData(data);
+
     }
 
     public synchronized void start() throws Exception {

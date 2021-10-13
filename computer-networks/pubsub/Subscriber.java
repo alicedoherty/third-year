@@ -50,45 +50,57 @@ public class Subscriber extends Node {
 				default:
 					System.out.println("Unexpected packet" + packet.toString());
 			}
-
+			getUserInput();
 		}
 		catch(Exception e) {e.printStackTrace();}
 	}
 
 	public synchronized void sendSubscriptionRequest(String message) throws Exception {
-		byte[] buffer = message.getBytes();
-		byte[] data = new byte[HEADER_LENGTH + buffer.length];
-
+		byte[] data = getDataByteArray(message);
 		data[TYPE_POS] = SUBSCRIBE;
-		data[LENGTH_POS] = (byte) buffer.length;
-		System.arraycopy(buffer, 0, data, HEADER_LENGTH, buffer.length);
 
 		System.out.println("Sending subscribe request packet...");
 		DatagramPacket packet = new DatagramPacket(data, data.length, dstAddress);
 		socket.send(packet);
 		System.out.println("Packet sent");
-		// this.wait();
+	}
+
+	public synchronized void sendUnsubscriptionRequest(String message) throws Exception {
+		byte[] data = getDataByteArray(message);
+		data[TYPE_POS] = UNSUBSCRIBE;
+
+		System.out.println("Sending unsubscribe request packet...");
+		DatagramPacket packet = new DatagramPacket(data, data.length, dstAddress);
+		socket.send(packet);
+		System.out.println("Packet sent");
 	}
 
 	public synchronized void start() throws Exception {
-		// System.out.println("Waiting for contact");
 		System.out.println("Subscriber program starting...");
-		// System.out.println("Sending request to subscribe to \"temperature\"");
+		getUserInput();
+		this.wait();
+	}
 
+	private void getUserInput() throws Exception {
 		Scanner scanner = new Scanner(System.in);
 		boolean finished = false;
 
 		while(!finished) {
-			System.out.println("Enter topic to subscribe to: ");
+			System.out.println("To subscribe to a topic enter \"sub <topic>\"");
+			System.out.println("To unsubscribe from a topic enter \"unsub <topic>\"");
 			String input = scanner.nextLine();
 
-			if(input.equalsIgnoreCase("quit")) {
+			String[] splitInput = input.split("\\s+");
+
+			if(input.equalsIgnoreCase("exit")) {
 				finished = true;
-			} else {
-				sendSubscriptionRequest(input);
+			} else if (splitInput[0].equals("sub")){
+				sendSubscriptionRequest(splitInput[1]);
+			} else if (splitInput[0].equals("unsub")) {
+				sendUnsubscriptionRequest(splitInput[1]);
 			}
 		}
-		this.wait();
+		scanner.close();
 	}
 	public static void main(String[] args) {
 		try {

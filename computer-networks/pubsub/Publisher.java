@@ -63,7 +63,7 @@ public class Publisher extends Node {
 
 			String input = scanner.nextLine();
 
-			if(input.equalsIgnoreCase("quit")) {
+			if(input.equalsIgnoreCase("exit")) {
 				finished = true;
 			} else {
 				sendMessage(input);
