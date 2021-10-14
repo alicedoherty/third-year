@@ -1,4 +1,5 @@
 import java.net.DatagramSocket;
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.util.Map;
@@ -26,7 +27,7 @@ public class Broker extends Node {
             switch(data[TYPE_POS]) {
                 case PUBLISH:
                     System.out.println("Received request to publish.");
-                    sendMessage(data);
+                    sendMessage(data, packet);
                     break;
                 case SUBSCRIBE:
                     System.out.println("Received request to subscribe.");
@@ -45,7 +46,7 @@ public class Broker extends Node {
 	}
 
     // Sender code - publish code
-    public synchronized void sendMessage(byte[] receivedData) throws Exception {
+    public synchronized void sendMessage(byte[] receivedData, DatagramPacket receivedPacket) throws Exception {
         // byte[] receivedData = receivedPacket.getData();
         byte[] buffer = new byte[receivedData[LENGTH_POS]];
 		System.arraycopy(receivedData, HEADER_LENGTH, buffer, 0, buffer.length);
@@ -68,19 +69,25 @@ public class Broker extends Node {
             HashSet<InetSocketAddress> subscribers = subscriberMap.get(topic);
             Iterator<InetSocketAddress> i = subscribers.iterator();
             while(i.hasNext()) {
-                // System.out.println(i.next());
                 DatagramPacket packet= new DatagramPacket(receivedData, receivedData.length, i.next());
-                //System.out.println(i.next());
                 socket.send(packet);
-                System.out.println("Packet sent");
+                // System.out.println("Packet sent");
             }
         }
-
+        sendAck(PUBACK, receivedPacket);
 	}
+
+    private void sendAck(byte ackType, DatagramPacket packet) throws IOException {
+        byte[] data = new byte[1];
+        data[TYPE_POS] = ackType;
+        InetSocketAddress destinationAddr = (InetSocketAddress) packet.getSocketAddress();
+        DatagramPacket ack = new DatagramPacket(data, data.length, destinationAddr);
+        socket.send(ack);
+    }
 
     // getTopic() function to implement
 
-    private void subscribe(byte[] data, DatagramPacket packet) {
+    private void subscribe(byte[] data, DatagramPacket packet) throws IOException {
         InetSocketAddress subscriberAddr = (InetSocketAddress) packet.getSocketAddress();
         String topic = getStringData(data);
 
@@ -101,10 +108,11 @@ public class Broker extends Node {
         Iterator<InetSocketAddress> i = subscribersCheck.iterator();
         while(i.hasNext()) {
             System.out.println(i.next());
-        }       
+        }
+        sendAck(SUBACK, packet);       
     }
 
-    private void unsubscribe(byte[] data, DatagramPacket packet) {
+    private void unsubscribe(byte[] data, DatagramPacket packet) throws IOException {
         InetSocketAddress subscriberAddr = (InetSocketAddress) packet.getSocketAddress();
         String topic = getStringData(data);
 
@@ -116,7 +124,8 @@ public class Broker extends Node {
         Iterator<InetSocketAddress> i = subscribersCheck.iterator();
         while(i.hasNext()) {
             System.out.println(i.next());
-        }    
+        }
+        sendAck(UNSUBACK, packet);    
     }
 
     public synchronized void start() throws Exception {

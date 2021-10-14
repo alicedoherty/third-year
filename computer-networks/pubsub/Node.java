@@ -17,6 +17,7 @@ public abstract class Node {
 	static final int LENGTH_POS = 1;
 
 	// Packet types
+	// TODO update numbers
 	static final byte PUBLISH = 3;
 	static final byte PUBACK = 4;
 	static final byte SUBSCRIBE = 8;
@@ -42,6 +43,8 @@ public abstract class Node {
 
 
 	public abstract void onReceipt(DatagramPacket packet);
+
+	// TODO rename these functions
 
 	protected byte[] getDataByteArray(String message) {
 		byte[] buffer = message.getBytes();

@@ -21,20 +21,17 @@ public class Publisher extends Node {
 	}
 
 	public synchronized void onReceipt(DatagramPacket packet) {
-		// PacketContent content= PacketContent.fromDatagramPacket(packet);
-		// System.out.println(content.toString());
-		// this.notify();
-
-		// byte[] data = packet.getData();
-
-		// switch (data[TYPE_POS]) {
-		// 	case PUBACK:
-		// 		System.out.println("Received publish ack");
-		// 		this.notify();
-		// 		break;
-		// 	default:
-		// 		System.out.println("Unexpected packet" + packet.toString());
-		// }
+		try {
+			byte[] data = packet.getData();
+			switch(data[TYPE_POS]) {
+				case PUBACK:
+					System.out.println("Received publish ack");
+					break;
+				default:
+					System.out.println("Received unexpected packet" + packet.toString());
+			}
+		}
+		catch(Exception e) {e.printStackTrace();}
 	}
 
 	// Publish message to broker

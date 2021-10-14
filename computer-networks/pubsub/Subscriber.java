@@ -21,7 +21,6 @@ public class Subscriber extends Node {
 	public void onReceipt(DatagramPacket packet) {
 		try {
 			//this.notify();
-			System.out.println("Received packet");
 			byte[] data = packet.getData();
 
 			switch(data[TYPE_POS]) {
@@ -47,6 +46,12 @@ public class Subscriber extends Node {
 					// socket.send(response);
 					// System.out.println("New publication: " + getMessage(data));
 					// System.out.println("Enter topic to subscribe to: ");
+					break;
+				case SUBACK:
+					System.out.println("Received subscribe ack");
+					break;
+				case UNSUBACK:
+					System.out.println("Received unsubscribe ack");
 					break;
 				default:
 					System.out.println("Unexpected packet" + packet.toString());
