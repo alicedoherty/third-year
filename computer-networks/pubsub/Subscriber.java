@@ -25,27 +25,12 @@ public class Subscriber extends Node {
 
 			switch(data[TYPE_POS]) {
 				case PUBLISH:
-					// byte[] data = packet.getData()
-					// System.arraycopy(data, 1)
-
-
-					byte[] buffer = new byte[data[LENGTH_POS]];
-					System.arraycopy(data, HEADER_LENGTH, buffer, 0, buffer.length);
-					String content = new String(buffer);
+					// byte[] buffer = new byte[data[LENGTH_POS]];
+					// System.arraycopy(data, HEADER_LENGTH, buffer, 0, buffer.length);
+					// String content = new String(buffer);
+					String content = getStringData(data);
 					System.out.println("Received data:" + content);
 					System.out.println("Length: " + content.length());
-					// You could test here if the String says "end" and terminate the
-					// program with a "this.notify()" that wakes up the start() method.
-					// data = new byte[HEADER_LENGTH];
-					// data[TYPE_POS] = TYPE_ACK;
-					// data[ACKCODE_POS] = ACK_ALLOK;
-					
-					// DatagramPacket response;
-					// response = new DatagramPacket(data, data.length);
-					// response.setSocketAddress(packet.getSocketAddress());
-					// socket.send(response);
-					// System.out.println("New publication: " + getMessage(data));
-					// System.out.println("Enter topic to subscribe to: ");
 					break;
 				case SUBACK:
 					System.out.println("Received subscribe ack");
@@ -56,7 +41,6 @@ public class Subscriber extends Node {
 				default:
 					System.out.println("Unexpected packet" + packet.toString());
 			}
-			// getUserInput();
 		}
 		catch(Exception e) {e.printStackTrace();}
 	}
@@ -111,31 +95,6 @@ public class Subscriber extends Node {
 			this.wait();
 		}
 	}
-
-	// private void getUserInput() throws Exception {
-	// 	Scanner scanner = new Scanner(System.in);
-	// 	boolean finished = false;
-
-	// 	while(!finished) {
-	// 		System.out.println("To subscribe to a topic enter \"sub <topic>\"");
-	// 		System.out.println("To unsubscribe from a topic enter \"unsub <topic>\"");
-	// 		String input = scanner.nextLine();
-
-	// 		String[] splitInput = input.split("\\s+");
-
-	// 		if(input.equalsIgnoreCase("exit")) {
-	// 			finished = true;
-	// 		} else if (splitInput[0].equals("sub")){
-	// 			sendSubscriptionRequest(splitInput[1]);
-	// 			this.wait();
-	// 		} else if (splitInput[0].equals("unsub")) {
-	// 			sendUnsubscriptionRequest(splitInput[1]);
-	// 			this.wait();
-	// 		} else {
-	// 			System.out.println("Invalid input.");
-	// 		}
-	// 	}
- 	// }
 	public static void main(String[] args) {
 		try {
 			(new Subscriber()).start();

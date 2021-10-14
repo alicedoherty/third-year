@@ -65,6 +65,9 @@ public class Broker extends Node {
         String[] splitContent = content.split(":");
         String topic = splitContent[0];
         System.out.println("Topic is: " + topic);
+
+        String[] topicLevels = topic.split("/");
+
         if(subscriberMap.containsKey(topic)) {
             HashSet<InetSocketAddress> subscribers = subscriberMap.get(topic);
             Iterator<InetSocketAddress> i = subscribers.iterator();
@@ -130,11 +133,6 @@ public class Broker extends Node {
 
     public synchronized void start() throws Exception {
 		System.out.println("Waiting for contact");
-        
-        // InetSocketAddress subscriberAddr = new InetSocketAddress(DEFAULT_DST, SUB_PORT);
-        // subscriberMap.put("temperature", subscriberAddr);
-        // System.out.println("Subscription added");
-        //subscribe();
 		while (true) {
 			this.wait();
 		}
