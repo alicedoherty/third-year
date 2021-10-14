@@ -1,9 +1,22 @@
 version: '2'
 services:
 
-# Publisher
-  publisher:
-    container_name: publisher
+# Publishers
+  publisher1:
+    container_name: publisher1
+    image: java
+    restart: "no"
+#    ports:
+#      - 9000:9000
+    volumes:
+      - ./pubsub:/pubsub
+    # networks:
+    #  pubsub:
+    #    ipv4_address: 192.168.10.10
+    command: tail -f /dev/null
+
+  publisher2:
+    container_name: publisher2
     image: java
     restart: "no"
 #    ports:
@@ -29,9 +42,20 @@ services:
     #    ipv4_address: 192.168.10.20
     command: tail -f /dev/null
 
-# Subscriber
-  subscriber:
-    container_name: subscriber
+# Subscribers
+  subscriber1:
+    container_name: subscriber1
+    image: java
+    restart: "no"
+    volumes:
+      - ./pubsub:/pubsub
+    # networks:
+    #  pubsub:
+    #    ipv4_address: 192.168.10.30
+    command: tail -f /dev/null
+
+  subscriber2:
+    container_name: subscriber2
     image: java
     restart: "no"
     volumes:
