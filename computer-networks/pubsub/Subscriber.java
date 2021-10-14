@@ -20,6 +20,7 @@ public class Subscriber extends Node {
 
 	public void onReceipt(DatagramPacket packet) {
 		try {
+			//this.notify();
 			System.out.println("Received packet");
 			byte[] data = packet.getData();
 
@@ -50,7 +51,7 @@ public class Subscriber extends Node {
 				default:
 					System.out.println("Unexpected packet" + packet.toString());
 			}
-			getUserInput();
+			// getUserInput();
 		}
 		catch(Exception e) {e.printStackTrace();}
 	}
@@ -77,11 +78,7 @@ public class Subscriber extends Node {
 
 	public synchronized void start() throws Exception {
 		System.out.println("Subscriber program starting...");
-		getUserInput();
-		this.wait();
-	}
-
-	private void getUserInput() throws Exception {
+		//getUserInput();
 		Scanner scanner = new Scanner(System.in);
 		boolean finished = false;
 
@@ -96,12 +93,44 @@ public class Subscriber extends Node {
 				finished = true;
 			} else if (splitInput[0].equals("sub")){
 				sendSubscriptionRequest(splitInput[1]);
+				// this.wait();
 			} else if (splitInput[0].equals("unsub")) {
 				sendUnsubscriptionRequest(splitInput[1]);
+				// this.wait();
+			} else {
+				System.out.println("Invalid input.");
 			}
+			//this.wait();
 		}
-		scanner.close();
+		while(true) {
+			this.wait();
+		}
 	}
+
+	// private void getUserInput() throws Exception {
+	// 	Scanner scanner = new Scanner(System.in);
+	// 	boolean finished = false;
+
+	// 	while(!finished) {
+	// 		System.out.println("To subscribe to a topic enter \"sub <topic>\"");
+	// 		System.out.println("To unsubscribe from a topic enter \"unsub <topic>\"");
+	// 		String input = scanner.nextLine();
+
+	// 		String[] splitInput = input.split("\\s+");
+
+	// 		if(input.equalsIgnoreCase("exit")) {
+	// 			finished = true;
+	// 		} else if (splitInput[0].equals("sub")){
+	// 			sendSubscriptionRequest(splitInput[1]);
+	// 			this.wait();
+	// 		} else if (splitInput[0].equals("unsub")) {
+	// 			sendUnsubscriptionRequest(splitInput[1]);
+	// 			this.wait();
+	// 		} else {
+	// 			System.out.println("Invalid input.");
+	// 		}
+	// 	}
+ 	// }
 	public static void main(String[] args) {
 		try {
 			(new Subscriber()).start();

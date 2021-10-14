@@ -12,7 +12,7 @@ public class Publisher extends Node {
 	Publisher() {
 		try {
 			//dstAddress = new InetSocketAddress(DEFAULT_DST, BKR_PORT);
-			dstAddress = new InetSocketAddress("broker", BKR_PORT);;
+			dstAddress = new InetSocketAddress("broker", BKR_PORT);
 			socket = new DatagramSocket(PUB_PORT);
 			listener.go();
 		} catch (java.lang.Exception e) {

@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 public class Broker extends Node {
     InetSocketAddress dstAddress;
@@ -63,15 +64,15 @@ public class Broker extends Node {
         String topic = splitContent[0];
         System.out.println("Topic is: " + topic);
         if(subscriberMap.containsKey(topic)) {
-            InetSocketAddress dstAddress = subscriberMap.get(topic);
-            // dstAddress = dstAddresses[0];
-    
-            DatagramPacket packet= new DatagramPacket(receivedData, receivedData.length, dstAddress);
-    
-            // packet.setSocketAddress(dstAddress);
-            socket.send(packet);
-            System.out.println("Packet sent");
-            // this.wait();
+            HashSet<InetSocketAddress> subscribers = subscriberMap.get(topic);
+            Iterator<InetSocketAddress> i = subscribers.iterator();
+            while(i.hasNext()) {
+                // System.out.println(i.next());
+                DatagramPacket packet= new DatagramPacket(receivedData, receivedData.length, i.next());
+                //System.out.println(i.next());
+                socket.send(packet);
+                System.out.println("Packet sent");
+            }
         }
 
 	}
@@ -83,10 +84,33 @@ public class Broker extends Node {
 
         String topic = getStringData(data);
 
+        // subscriberMap.computeIfAbsent(topic, k -> new HashSet<>()).add(subscriberAddr);
         // add checks if they've already subscribed
 
-        subscriberMap.put(topic, subscriberAddr);
+        if (!subscriberMap.containsKey(topic)) {
+            // If the subscriberMap doesn't already contain the topic, create a new HashSet for it.
+            HashSet<InetSocketAddress> subscribers = new HashSet<InetSocketAddress>();
+            subscriberMap.put(topic, subscribers);
+
+        }
+
+        subscriberMap.get(topic).add(subscriberAddr);
+        //     HashSet<InetSocketAddress> subscribers = subscriberMap.get(topic);
+        //     subscribers.add(subscriberAddr);
+
+        // } else {
+        //     HashSet<InetSocketAddress> subscribers = new HashSet<>();
+        // }
+       
+        // subscriberMap.put(topic, subscriberAddr);
         System.out.println("Subscription to " + topic + " added.");
+
+        System.out.println("Current subscribers to topic " + topic + " are:");
+        HashSet<InetSocketAddress> subscribersCheck = subscriberMap.get(topic);
+        Iterator<InetSocketAddress> i = subscribersCheck.iterator();
+        while(i.hasNext()) {
+            System.out.println(i.next());
+        }       
     }
 
     private void unsubscribe(byte[] data, DatagramPacket packet) {
