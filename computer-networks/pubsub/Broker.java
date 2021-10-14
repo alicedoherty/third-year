@@ -35,6 +35,7 @@ public class Broker extends Node {
                 case UNSUBSCRIBE:
                     System.out.println("Received request to unsubscribe");
                     unsubscribe(data, packet);
+                    break;
                 default:
                     System.out.println("Received unexpected packet" + packet.toString());
             }
@@ -81,11 +82,9 @@ public class Broker extends Node {
 
     private void subscribe(byte[] data, DatagramPacket packet) {
         InetSocketAddress subscriberAddr = (InetSocketAddress) packet.getSocketAddress();
-
         String topic = getStringData(data);
 
         // subscriberMap.computeIfAbsent(topic, k -> new HashSet<>()).add(subscriberAddr);
-        // add checks if they've already subscribed
 
         if (!subscriberMap.containsKey(topic)) {
             // If the subscriberMap doesn't already contain the topic, create a new HashSet for it.
@@ -94,16 +93,8 @@ public class Broker extends Node {
 
         }
 
-        subscriberMap.get(topic).add(subscriberAddr);
-        //     HashSet<InetSocketAddress> subscribers = subscriberMap.get(topic);
-        //     subscribers.add(subscriberAddr);
-
-        // } else {
-        //     HashSet<InetSocketAddress> subscribers = new HashSet<>();
-        // }
-       
-        // subscriberMap.put(topic, subscriberAddr);
-        System.out.println("Subscription to " + topic + " added.");
+        if (subscriberMap.get(topic).add(subscriberAddr))
+            System.out.println("Subscription to " + topic + " added successfully.");
 
         System.out.println("Current subscribers to topic " + topic + " are:");
         HashSet<InetSocketAddress> subscribersCheck = subscriberMap.get(topic);
@@ -114,8 +105,18 @@ public class Broker extends Node {
     }
 
     private void unsubscribe(byte[] data, DatagramPacket packet) {
+        InetSocketAddress subscriberAddr = (InetSocketAddress) packet.getSocketAddress();
         String topic = getStringData(data);
 
+        if (subscriberMap.get(topic).remove(subscriberAddr))
+            System.out.println("Subscription to " + topic + "removed successfully.");
+
+        System.out.println("Current subscribers to topic " + topic + " are:");
+        HashSet<InetSocketAddress> subscribersCheck = subscriberMap.get(topic);
+        Iterator<InetSocketAddress> i = subscribersCheck.iterator();
+        while(i.hasNext()) {
+            System.out.println(i.next());
+        }    
     }
 
     public synchronized void start() throws Exception {
