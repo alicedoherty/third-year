@@ -5,12 +5,15 @@ import java.util.concurrent.CountDownLatch;
 
 public abstract class Node {
 	static final int PACKETSIZE = 65000;
-	static final String DEFAULT_DST = "localhost";
+	// static final String DEFAULT_DST = "localhost";
 
 	// Port numbers
+	// static final int PUB_PORT = 50000;
+	// static final int BKR_PORT = 50001;
+	// static final int SUB_PORT = 50002;
 	static final int PUB_PORT = 50000;
-	static final int BKR_PORT = 50001;
-	static final int SUB_PORT = 50002;
+	static final int BKR_PORT = 50000;
+	static final int SUB_PORT = 50000;
 
 	static final int HEADER_LENGTH = 2; // Fixed length of the header
 	static final int TYPE_POS = 0; // Position of the type within the header

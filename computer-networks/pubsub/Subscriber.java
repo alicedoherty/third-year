@@ -10,8 +10,10 @@ public class Subscriber extends Node {
 
 	Subscriber() {
 		try {
-			// dstAddress = new InetSocketAddress(DEFAULT_DST, BKR_PORT);
-			dstAddress = new InetSocketAddress("broker", BKR_PORT);
+			String IP = "192.168.10.30";
+			// String IP = "localhost"
+			dstAddress = new InetSocketAddress(IP, BKR_PORT);
+			//dstAddress = new InetSocketAddress("broker", BKR_PORT);
 			socket= new DatagramSocket(SUB_PORT);
 			listener.go();
 		}

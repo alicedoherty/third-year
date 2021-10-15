@@ -52,11 +52,12 @@ public class Broker extends Node {
 		System.arraycopy(receivedData, HEADER_LENGTH, buffer, 0, buffer.length);
 		String content = new String(buffer);
 
-        // byte[] buffer2 = content.getBytes();
-        // byte[] data = new byte[HEADER_LENGTH+buffer2.length];
-        // data[TYPE_POS] = PUBLISH;
-        // data[LENGTH_POS] = (byte)buffer2.length;
-        // System.arraycopy(buffer2, 0, data, HEADER_LENGTH, buffer2.length);
+        // Need this or else packet size will be max of 6500
+        byte[] buffer2 = content.getBytes();
+        byte[] data = new byte[HEADER_LENGTH+buffer2.length];
+        data[TYPE_POS] = PUBLISH;
+        data[LENGTH_POS] = (byte)buffer2.length;
+        System.arraycopy(buffer2, 0, data, HEADER_LENGTH, buffer2.length);
 
         // byte[] data = receivedPacket.getData();
         System.out.println("Publishing packet: " + content);
@@ -66,13 +67,24 @@ public class Broker extends Node {
         String topic = splitContent[0];
         System.out.println("Topic is: " + topic);
 
-        String[] topicLevels = topic.split("/");
+        // String[] topicLevels = topic.split("/");
+
+        // for(Map.Entry<String, HashSet<InetSocketAddress>> entry : subscriberMap.entrySet()) {
+        //     String subscriberTopic = entry.getKey();
+        //     String[] splitSubTopic = subscriberTopic.split("/"); 
+        // }
+
+        // for (Map.Entry<String, Object> entry : map.entrySet()) {
+        //     String key = entry.getKey();
+        //     Object value = entry.getValue();
+        //     // ...
+        // }
 
         if(subscriberMap.containsKey(topic)) {
             HashSet<InetSocketAddress> subscribers = subscriberMap.get(topic);
             Iterator<InetSocketAddress> i = subscribers.iterator();
             while(i.hasNext()) {
-                DatagramPacket packet= new DatagramPacket(receivedData, receivedData.length, i.next());
+                DatagramPacket packet= new DatagramPacket(data, data.length, i.next());
                 socket.send(packet);
                 // System.out.println("Packet sent");
             }

@@ -11,8 +11,10 @@ public class Publisher extends Node {
 
 	Publisher() {
 		try {
-			//dstAddress = new InetSocketAddress(DEFAULT_DST, BKR_PORT);
-			dstAddress = new InetSocketAddress("broker", BKR_PORT);
+			String IP = "192.168.10.30";
+			// String IP = "localhost";
+			dstAddress = new InetSocketAddress(IP, BKR_PORT);
+			//dstAddress = new InetSocketAddress("broker", BKR_PORT);
 			socket = new DatagramSocket(PUB_PORT);
 			listener.go();
 		} catch (java.lang.Exception e) {
