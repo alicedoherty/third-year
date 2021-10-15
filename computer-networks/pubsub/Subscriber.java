@@ -27,18 +27,17 @@ public class Subscriber extends Node {
 
 			switch(data[TYPE_POS]) {
 				case PUBLISH:
-					// byte[] buffer = new byte[data[LENGTH_POS]];
-					// System.arraycopy(data, HEADER_LENGTH, buffer, 0, buffer.length);
-					// String content = new String(buffer);
 					String content = getStringData(data);
-					System.out.println("Received data:" + content);
-					System.out.println("Length: " + content.length());
+					// Check for null pointer if something with no payload is sent
+					String[] contentSplit = content.split(":");
+					System.out.println("Received payload \"" + contentSplit[1] + "\" with the topic \"" + contentSplit[0] + "\"");
+					// System.out.println("Length: " + content.length());
 					break;
 				case SUBACK:
-					System.out.println("Received subscribe ack");
+					System.out.println("Received subscribe ack from broker");
 					break;
 				case UNSUBACK:
-					System.out.println("Received unsubscribe ack");
+					System.out.println("Received unsubscribe ack from broker");
 					break;
 				default:
 					System.out.println("Unexpected packet" + packet.toString());
@@ -51,20 +50,18 @@ public class Subscriber extends Node {
 		byte[] data = getDataByteArray(message);
 		data[TYPE_POS] = SUBSCRIBE;
 
-		System.out.println("Sending subscribe request packet...");
 		DatagramPacket packet = new DatagramPacket(data, data.length, dstAddress);
 		socket.send(packet);
-		System.out.println("Packet sent");
+		System.out.println("Subscribe request packet sent...");
 	}
 
 	public synchronized void sendUnsubscriptionRequest(String message) throws Exception {
 		byte[] data = getDataByteArray(message);
 		data[TYPE_POS] = UNSUBSCRIBE;
 
-		System.out.println("Sending unsubscribe request packet...");
 		DatagramPacket packet = new DatagramPacket(data, data.length, dstAddress);
 		socket.send(packet);
-		System.out.println("Packet sent");
+		System.out.println("Unsubscribe request packet sent...");
 	}
 
 	public synchronized void start() throws Exception {
@@ -74,11 +71,11 @@ public class Subscriber extends Node {
 		boolean finished = false;
 
 		while(!finished) {
-			System.out.println("To subscribe to a topic enter \"sub <topic>\"");
-			System.out.println("To unsubscribe from a topic enter \"unsub <topic>\"");
+			System.out.println("To subscribe to a topic enter \"sub:<topic>\"");
+			System.out.println("To unsubscribe from a topic enter \"unsub:<topic>\"");
 			String input = scanner.nextLine();
 
-			String[] splitInput = input.split("\\s+");
+			String[] splitInput = input.split(":");
 
 			if(input.equalsIgnoreCase("exit")) {
 				finished = true;

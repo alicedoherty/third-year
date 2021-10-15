@@ -22,17 +22,12 @@ public abstract class Node {
 
 	// Packet types
 	// TODO update numbers
-	static final byte PUBLISH = 3;
-	static final byte PUBACK = 4;
-	static final byte SUBSCRIBE = 8;
-	static final byte SUBACK = 9;
-	static final byte UNSUBSCRIBE = 10;
-	static final byte UNSUBACK = 11;
-
-	// static final byte TYPE_ACK = 2; // Indicating an acknowledgement
-	// static final int ACKCODE_POS = 1; // Position of the acknowledgement type in
-	// the header
-	// static final byte ACK_ALLOK = 10; // Inidcating that everything is ok
+	static final byte PUBLISH = 1;
+	static final byte PUBACK = 2;
+	static final byte SUBSCRIBE = 3;
+	static final byte SUBACK = 4;
+	static final byte UNSUBSCRIBE = 5;
+	static final byte UNSUBACK = 6;
 
 	DatagramSocket socket;
 	Listener listener;

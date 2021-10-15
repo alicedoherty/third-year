@@ -26,11 +26,11 @@ public class Broker extends Node {
             byte[] data = packet.getData();
             switch(data[TYPE_POS]) {
                 case PUBLISH:
-                    System.out.println("Received request to publish.");
+                    System.out.println("Received request to publish");
                     sendMessage(data, packet);
                     break;
                 case SUBSCRIBE:
-                    System.out.println("Received request to subscribe.");
+                    System.out.println("Received request to subscribe");
                     subscribe(data, packet);
                     break;
                 case UNSUBSCRIBE:
@@ -59,11 +59,9 @@ public class Broker extends Node {
         data[LENGTH_POS] = (byte)buffer2.length;
         System.arraycopy(buffer2, 0, data, HEADER_LENGTH, buffer2.length);
 
-        System.out.println("Publishing packet: " + content);
-
         String[] splitContent = content.split(":");
         String topic = splitContent[0];
-        System.out.println("Topic is: " + topic);
+        // System.out.println("Topic is: " + topic);
 
         // String subscriberTopic = "*/temp";
         // String regexTopic = subscriberTopic.replace("*", ".*?");
@@ -75,13 +73,15 @@ public class Broker extends Node {
             String subscriberTopic = entry.getKey();
             String regexSubscriberTopic = subscriberTopic.replace("*", ".*?");
             if(topic.matches(regexSubscriberTopic)) {
-                System.out.println("Match: " + topic + regexSubscriberTopic);
+                // System.out.println("Match: " + topic + regexSubscriberTopic);
                 HashSet<InetSocketAddress> subscribers = entry.getValue();
                 Iterator<InetSocketAddress> i = subscribers.iterator();
                 while(i.hasNext()) {
-                    DatagramPacket packet= new DatagramPacket(data, data.length, i.next());
+                    InetSocketAddress addr = i.next();
+                    DatagramPacket packet= new DatagramPacket(data, data.length, addr);
                     socket.send(packet);
-                    System.out.println("Packet sent");
+                    // System.out.println("Packet sent");
+                    System.out.println("Packet \"" + content + "\" send to " + addr);
                 }
             }
         }
@@ -125,7 +125,7 @@ public class Broker extends Node {
         if (subscriberMap.get(topic).add(subscriberAddr))
             System.out.println("Subscription to " + topic + " added successfully.");
 
-        System.out.println("Current subscribers to topic " + topic + " are:");
+        System.out.println("Current subscribers to the topic \"" + topic + "\" are:");
         HashSet<InetSocketAddress> subscribersCheck = subscriberMap.get(topic);
         Iterator<InetSocketAddress> i = subscribersCheck.iterator();
         while(i.hasNext()) {
@@ -138,10 +138,11 @@ public class Broker extends Node {
         InetSocketAddress subscriberAddr = (InetSocketAddress) packet.getSocketAddress();
         String topic = getStringData(data);
 
+        // Check that it's subscribed to first - null ptr exception
         if (subscriberMap.get(topic).remove(subscriberAddr))
             System.out.println("Subscription to " + topic + "removed successfully.");
 
-        System.out.println("Current subscribers to topic " + topic + " are:");
+        System.out.println("Current subscribers to the topic \"" + topic + "\" are:");
         HashSet<InetSocketAddress> subscribersCheck = subscriberMap.get(topic);
         Iterator<InetSocketAddress> i = subscribersCheck.iterator();
         while(i.hasNext()) {
@@ -151,7 +152,7 @@ public class Broker extends Node {
     }
 
     public synchronized void start() throws Exception {
-		System.out.println("Waiting for contact");
+		System.out.println("Broker program starting...");
 		while (true) {
 			this.wait();
 		}

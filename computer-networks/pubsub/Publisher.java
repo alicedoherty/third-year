@@ -27,7 +27,7 @@ public class Publisher extends Node {
 			byte[] data = packet.getData();
 			switch(data[TYPE_POS]) {
 				case PUBACK:
-					System.out.println("Received publish ack");
+					System.out.println("Received publish ack from broker");
 					break;
 				default:
 					System.out.println("Received unexpected packet" + packet.toString());
@@ -45,10 +45,9 @@ public class Publisher extends Node {
 		data[LENGTH_POS] = (byte) buffer.length;
 		System.arraycopy(buffer, 0, data, HEADER_LENGTH, buffer.length);
 
-		System.out.println("Sending packet to broker...");
 		DatagramPacket packet = new DatagramPacket(data, data.length, dstAddress);
 		socket.send(packet);
-		System.out.println("Packet sent");
+		System.out.println("\"" + message + "\" sent to broker");
 		// this.wait();
 	}
 
