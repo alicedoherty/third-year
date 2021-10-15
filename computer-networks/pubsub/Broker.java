@@ -59,36 +59,43 @@ public class Broker extends Node {
         data[LENGTH_POS] = (byte)buffer2.length;
         System.arraycopy(buffer2, 0, data, HEADER_LENGTH, buffer2.length);
 
-        // byte[] data = receivedPacket.getData();
         System.out.println("Publishing packet: " + content);
-       //  System.out.println("Sending packet...");
 
         String[] splitContent = content.split(":");
         String topic = splitContent[0];
         System.out.println("Topic is: " + topic);
 
-        // String[] topicLevels = topic.split("/");
-
-        // for(Map.Entry<String, HashSet<InetSocketAddress>> entry : subscriberMap.entrySet()) {
-        //     String subscriberTopic = entry.getKey();
-        //     String[] splitSubTopic = subscriberTopic.split("/"); 
-        // }
-
-        // for (Map.Entry<String, Object> entry : map.entrySet()) {
-        //     String key = entry.getKey();
-        //     Object value = entry.getValue();
-        //     // ...
-        // }
-
-        if(subscriberMap.containsKey(topic)) {
-            HashSet<InetSocketAddress> subscribers = subscriberMap.get(topic);
-            Iterator<InetSocketAddress> i = subscribers.iterator();
-            while(i.hasNext()) {
-                DatagramPacket packet= new DatagramPacket(data, data.length, i.next());
-                socket.send(packet);
-                // System.out.println("Packet sent");
+        // String subscriberTopic = "*/temp";
+        // String regexTopic = subscriberTopic.replace("*", ".*?");
+        // if(topic.matches(regexTopic)) {
+        //     System.out.println("matches: " + regexTopic);
+        // }        
+            
+        for (Map.Entry<String, HashSet<InetSocketAddress>> entry : subscriberMap.entrySet()) {
+            String subscriberTopic = entry.getKey();
+            String regexSubscriberTopic = subscriberTopic.replace("*", ".*?");
+            if(topic.matches(regexSubscriberTopic)) {
+                System.out.println("Match: " + topic + regexSubscriberTopic);
+                HashSet<InetSocketAddress> subscribers = entry.getValue();
+                Iterator<InetSocketAddress> i = subscribers.iterator();
+                while(i.hasNext()) {
+                    DatagramPacket packet= new DatagramPacket(data, data.length, i.next());
+                    socket.send(packet);
+                    System.out.println("Packet sent");
+                }
             }
         }
+
+
+        // if(subscriberMap.containsKey(topic)) {
+        //     HashSet<InetSocketAddress> subscribers = subscriberMap.get(topic);
+        //     Iterator<InetSocketAddress> i = subscribers.iterator();
+        //     while(i.hasNext()) {
+        //         DatagramPacket packet= new DatagramPacket(data, data.length, i.next());
+        //         socket.send(packet);
+        //         // System.out.println("Packet sent");
+        //     }
+        // }
         sendAck(PUBACK, receivedPacket);
 	}
 

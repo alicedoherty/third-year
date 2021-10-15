@@ -11,6 +11,7 @@ public abstract class Node {
 	// static final int PUB_PORT = 50000;
 	// static final int BKR_PORT = 50001;
 	// static final int SUB_PORT = 50002;
+	// TODO clean up
 	static final int PUB_PORT = 50000;
 	static final int BKR_PORT = 50000;
 	static final int SUB_PORT = 50000;
