@@ -140,7 +140,7 @@ public class Broker extends Node {
 
         // Check that it's subscribed to first - null ptr exception
         if (subscriberMap.get(topic).remove(subscriberAddr))
-            System.out.println("Subscription to " + topic + "removed successfully.");
+            System.out.println("Subscription to " + topic + " removed successfully.");
 
         System.out.println("Current subscribers to the topic \"" + topic + "\" are:");
         HashSet<InetSocketAddress> subscribersCheck = subscriberMap.get(topic);
