@@ -1,0 +1,38 @@
+:- discontiguous simplify/2.
+
+numeral(0).
+numeral(s(X)) :- numeral(X).
+numeral(X+Y) :- numeral(X), numeral(Y).	% Exercise 1
+numeral(p(X)) :- numeral(X).			% Exercise 2
+
+
+add(0,X,X).
+add(s(X),Y,s(Z)) :- add(X,Y,Z).
+
+% Exercise 1
+/** <examples>
+?- add2(s(0)+s(s(0)), s(s(0)), Z).
+?- add2(0, s(0)+s(s(0)), Z).
+?- add2(s(s(0)), s(0)+s(s(0)), Z).
+?- add2(s(0)+s(0), s(0+s(s(0))), Z).
+*/
+
+add2(X,Y,Z) :- simplify(X, Xs), simplify(Y,Ys), simplify(Xs+Ys,Z).
+
+simplify(0,0).
+simplify(X+Y,Z) :- add(X,Y,Z).
+simplify(s(X),s(Z)) :- simplify(X,Z).
+simplify(X+s(Y),Z) :- add(X,s(Y),Z).
+
+% Exercise 2
+/** <examples>
+?- add2(p(s(0)), s(s(0)), Z).
+?- add2(0, s(p(0)), Z).
+?- add2(p(0)+s(s(0)),s(s(0)),Z).
+?- add2(p(0), p(0)+s(p(0)), Z).
+*/
+
+simplify(p(s(X)),Z) :- simplify(X,Z).	% X-1+1=X
+simplify(s(p(X)),Z) :- simplify(X,Z).	% X+1-1=X
+simplify(p(X),p(Z)) :- simplify(X,Z).
+simplify(X+p(Y),Z) :- add(X,p(Y),Z).
