@@ -10,15 +10,15 @@
 
 numeral(0).
 numeral(s(X)) :- numeral(X).
-numeral(X+Y) :- numeral(X), numeral(Y).		% Exercise 1
-numeral(p(X)) :- numeral(X).				% Exercise 2
-numeral(-X) :- numeral(X).					% Exercise 4
-numeral(X-Y) :- numeral(X), numeral(Y).		% Exercise 6
+numeral(X+Y) :- numeral(X), numeral(Y).   % Exercise 1
+numeral(p(X)) :- numeral(X).              % Exercise 2
+numeral(-X) :- numeral(X).                % Exercise 4
+numeral(X-Y) :- numeral(X), numeral(Y).   % Exercise 6
 
 
 add(0,X,X).
 add(s(X),Y,s(Z)) :- add(X,Y,Z).
-add(p(X),Y,p(Z)) :- add(X,Y,Z).				% Exercise 2
+add(p(X),Y,p(Z)) :- add(X,Y,Z).           % Exercise 2
 
 
 /*
@@ -29,17 +29,17 @@ add(p(X),Y,p(Z)) :- add(X,Y,Z).				% Exercise 2
  * is needed for Ex 2).
  */
 
-add2(X,Y,Z) :- simplify(X, Xs), simplify(Y,Ys), simplify(Xs+Ys,Z).		% Exercise 1
+add2(X,Y,Z) :- simplify(X, Xs), simplify(Y,Ys), simplify(Xs+Ys,Z).    % Exercise 1
 
-simplify(0,0).		% Exercise 1
+simplify(0,0).    % Exercise 1
 
-simplify(s(p(X)),Z) :- simplify(X,Z).			% X+1-1=X
-simplify(p(s(X)),Z) :- simplify(X,Z).			% X-1+1=X
+simplify(s(p(X)),Z) :- simplify(X,Z).   % X+1-1=X
+simplify(p(s(X)),Z) :- simplify(X,Z).   % X-1+1=X
 
-simplify(s(X),s(Z)) :- simplify(X,Z).			% Exercise 1
+simplify(s(X),s(Z)) :- simplify(X,Z).   % Exercise 1
 simplify(p(X),p(Z)) :- simplify(X,Z).
 
-simplify(X+Y,Z) :- add(X,Y,R), simplify(R,Z).	% Exercise 1
+simplify(X+Y,Z) :- add(X,Y,R), simplify(R,Z).   % Exercise 1
 
 /*
  * Exercise 3
@@ -56,9 +56,9 @@ minus(X,Z) :- simplify(X,R), minused(R,Z).
  * Exercise 4
  */
 
-simplify(-s(X),Z) :- minused(s(X),Z).							% -s(X) is the same as s(X) minused
+simplify(-s(X),Z) :- minused(s(X),Z).                           % -s(X) is the same as s(X) minused
 simplify(-p(X),Z) :- minused(p(X),Z).
-simplify(-(X+Y),Z) :- minus(X,Xm), minus(Y,Ym), add2(Xm,Ym,Z).	% -(X+Y) is the same as (-X)+(-Y)
+simplify(-(X+Y),Z) :- minus(X,Xm), minus(Y,Ym), add2(Xm,Ym,Z).  % -(X+Y) is the same as (-X)+(-Y)
 
 /*
  * Exercise 5
@@ -72,4 +72,4 @@ subtract(X,Y,Z) :- simplify(X,Xs), simplify(Y,Ys), minus(Ys,Ym), add2(Xs,Ym,Z).
  */
 
 simplify(X-Y,Z) :- subtract(X,Y,Z).
-simplify(-(X-Y),Z) :- minus(X,Xm), add2(Xm,Y,Z).		% -(X-Y) is the same as (-X)+Y
+simplify(-(X-Y),Z) :- minus(X,Xm), add2(Xm,Y,Z).    % -(X-Y) is the same as (-X)+Y
