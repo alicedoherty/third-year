@@ -1,0 +1,75 @@
+/*
+ * Alice Doherty
+ * Student Number: 19333356
+ *
+ * If testing this code exercise by exercise, please copy the code under the relevant exercise
+ * as well all the code that came BEFORE it.
+ */
+
+:- discontiguous simplify/2.
+
+numeral(0).
+numeral(s(X)) :- numeral(X).
+numeral(X+Y) :- numeral(X), numeral(Y).		% Exercise 1
+numeral(p(X)) :- numeral(X).				% Exercise 2
+numeral(-X) :- numeral(X).					% Exercise 4
+numeral(X-Y) :- numeral(X), numeral(Y).		% Exercise 6
+
+
+add(0,X,X).
+add(s(X),Y,s(Z)) :- add(X,Y,Z).
+add(p(X),Y,p(Z)) :- add(X,Y,Z).				% Exercise 2
+
+
+/*
+ * Exercise 1 and Exercise 2
+ * As the rules defined in Exercise 1 affect Exercise 2, I can't put everything
+ * related to Ex 1 together first, as changing the order breaks Ex 2 code.
+ * I have commented which rules are needed for Ex 1 (and everything under this block
+ * is needed for Ex 2).
+ */
+
+add2(X,Y,Z) :- simplify(X, Xs), simplify(Y,Ys), simplify(Xs+Ys,Z).		% Exercise 1
+
+simplify(0,0).		% Exercise 1
+
+simplify(s(p(X)),Z) :- simplify(X,Z).			% X+1-1=X
+simplify(p(s(X)),Z) :- simplify(X,Z).			% X-1+1=X
+
+simplify(s(X),s(Z)) :- simplify(X,Z).			% Exercise 1
+simplify(p(X),p(Z)) :- simplify(X,Z).
+
+simplify(X+Y,Z) :- add(X,Y,R), simplify(R,Z).	% Exercise 1
+
+/*
+ * Exercise 3
+*/
+
+minused(0,0).
+minused(s(X),p(Z)) :- minused(X,Z).
+minused(p(X),s(Z)) :- minused(X,Z).
+
+% Simplify X and then negate/minus X (so it works with something like minus(s(p(0))+s(0), Z).)
+minus(X,Z) :- simplify(X,R), minused(R,Z).
+
+/*
+ * Exercise 4
+ */
+
+simplify(-s(X),Z) :- minused(s(X),Z).							% -s(X) is the same as s(X) minused
+simplify(-p(X),Z) :- minused(p(X),Z).
+simplify(-(X+Y),Z) :- minus(X,Xm), minus(Y,Ym), add2(Xm,Ym,Z).	% -(X+Y) is the same as (-X)+(-Y)
+
+/*
+ * Exercise 5
+ */
+
+% Simplify each of the terms, negate Y, and add X and the negation of Y.
+subtract(X,Y,Z) :- simplify(X,Xs), simplify(Y,Ys), minus(Ys,Ym), add2(Xs,Ym,Z).
+
+/*
+ * Exercise 6
+ */
+
+simplify(X-Y,Z) :- subtract(X,Y,Z).
+simplify(-(X-Y),Z) :- minus(X,Xm), add2(Xm,Y,Z).		% -(X-Y) is the same as (-X)+Y
