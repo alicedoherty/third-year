@@ -43,7 +43,7 @@ simplify(X+Y,Z) :- add(X,Y,R), simplify(R,Z).   % Exercise 1
 
 /*
  * Exercise 3
-*/
+ */
 
 minused(0,0).
 minused(s(X),p(Z)) :- minused(X,Z).
