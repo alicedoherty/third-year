@@ -81,18 +81,13 @@ public class Subscriber extends Node {
 				finished = true;
 			} else if (splitInput[0].equals("sub")){
 				sendSubscriptionRequest(splitInput[1]);
-				// this.wait();
 			} else if (splitInput[0].equals("unsub")) {
 				sendUnsubscriptionRequest(splitInput[1]);
-				// this.wait();
 			} else {
 				System.out.println("Invalid input.");
 			}
-			//this.wait();
 		}
-		while(true) {
-			this.wait();
-		}
+		scanner.close();
 	}
 	public static void main(String[] args) {
 		try {

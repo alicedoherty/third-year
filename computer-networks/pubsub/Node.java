@@ -52,16 +52,13 @@ public abstract class Node {
 	protected byte[] makeDataByteArray(String message) {
 		byte[] buffer = message.getBytes();
 		byte[] data = new byte[CONTROL_HEADER_LENGTH + buffer.length];
-		// data[LENGTH_POS] = (byte) buffer.length;
 		System.arraycopy(buffer, 0, data, CONTROL_HEADER_LENGTH, buffer.length);
 		return data;
 	}
 
 	// TODO rename and have one to get topic and one to get payload
 	protected String getStringData(byte[] data, DatagramPacket packet) {
-        //byte[] buffer = new byte[data[LENGTH_POS]];
-		byte[] buffer = new byte[packet.getLength()];
-		System.out.println("String data: " + packet.getLength());
+		byte[] buffer = new byte[packet.getLength()-CONTROL_HEADER_LENGTH];
 		System.arraycopy(data, CONTROL_HEADER_LENGTH, buffer, 0, buffer.length);
 		String string = new String(buffer);
 		return string;

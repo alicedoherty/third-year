@@ -36,20 +36,14 @@ public class Publisher extends Node {
 
 	// Publish message to broker
 	public synchronized void sendMessage(String message) throws Exception {
-		// byte[] buffer = message.getBytes();
-		// byte[] data = new byte[HEADER_LENGTH + buffer.length];
-
-		// data[TYPE_POS] = PUBLISH;
-		// data[LENGTH_POS] = (byte) buffer.length;
-		// System.arraycopy(buffer, 0, data, HEADER_LENGTH, buffer.length);
-
 		byte[] data = makeDataByteArray(message);
 		data[TYPE_POS] = PUBLISH;
 
 		DatagramPacket packet = new DatagramPacket(data, data.length, dstAddress);
 		socket.send(packet);
-		System.out.println("\"" + message + "\" sent to broker");
-		// this.wait();
+
+		String[] splitMessage = message.split(":");
+		System.out.println("\"" + splitMessage[0] + "\" with topic \"" + splitMessage[1] + "\" sent to broker");
 	}
 
 	private void start() throws Exception {
@@ -68,6 +62,7 @@ public class Publisher extends Node {
 				sendMessage(input);
 			}	
 		}
+		scanner.close();
 	}
 
 	public static void main(String[] args) {

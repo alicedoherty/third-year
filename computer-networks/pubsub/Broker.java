@@ -48,56 +48,28 @@ public class Broker extends Node {
 
     // Sender code - publish code
     public synchronized void sendMessage(byte[] receivedData, DatagramPacket receivedPacket) throws Exception {
-        // byte[] buffer = new byte[receivedData[LENGTH_POS]];
-		// System.arraycopy(receivedData, CONTROL_HEADER_LENGTH, buffer, 0, buffer.length);
-		// String content = new String(buffer);
-
-        // Need this or else packet size will be max of 6500
-        // byte[] buffer2 = content.getBytes();
-        // byte[] data = new byte[CONTROL_HEADER_LENGTH+buffer2.length];
-        // data[TYPE_POS] = PUBLISH;
-        // data[LENGTH_POS] = (byte)buffer2.length;
-        // System.arraycopy(buffer2, 0, data, CONTROL_HEADER_LENGTH, buffer2.length);
-
         byte[] buffer = new byte[receivedPacket.getLength()-CONTROL_HEADER_LENGTH];
         System.arraycopy(receivedData, CONTROL_HEADER_LENGTH, buffer, 0, buffer.length);
 		String content = new String(buffer);
 
         String[] splitContent = content.split(":");
         String topic = splitContent[0];
-        System.out.println("Topic is: " + topic);  
             
         for (Map.Entry<String, HashSet<InetSocketAddress>> entry : subscriberMap.entrySet()) {
             String subscriberTopic = entry.getKey();
             String regexSubscriberTopic = subscriberTopic.replace("*", ".*?");
-            System.out.println(regexSubscriberTopic);
-            System.out.println(regexSubscriberTopic.equals(topic));
 
             if(topic.matches(regexSubscriberTopic)) {
-                System.out.println("Match: " + topic + regexSubscriberTopic);
                 HashSet<InetSocketAddress> subscribers = entry.getValue();
                 Iterator<InetSocketAddress> i = subscribers.iterator();
                 while(i.hasNext()) {
                     InetSocketAddress addr = i.next();
-                    // DatagramPacket packet= new DatagramPacket(data, data.length, addr);
                     DatagramPacket packet= new DatagramPacket(receivedPacket.getData(), receivedPacket.getLength(), addr);
                     socket.send(packet);
-                    // System.out.println("Packet sent");
                     System.out.println("Packet \"" + content + "\" send to " + addr);
                 }
             }
         }
-
-
-        // if(subscriberMap.containsKey(topic)) {
-        //     HashSet<InetSocketAddress> subscribers = subscriberMap.get(topic);
-        //     Iterator<InetSocketAddress> i = subscribers.iterator();
-        //     while(i.hasNext()) {
-        //         DatagramPacket packet= new DatagramPacket(data, data.length, i.next());
-        //         socket.send(packet);
-        //         // System.out.println("Packet sent");
-        //     }
-        // }
         sendAck(PUBACK, receivedPacket);
 	}
 
@@ -114,8 +86,6 @@ public class Broker extends Node {
     private void subscribe(byte[] data, DatagramPacket packet) throws IOException {
         InetSocketAddress subscriberAddr = (InetSocketAddress) packet.getSocketAddress();
         String topic = getStringData(data, packet);
-
-        // subscriberMap.computeIfAbsent(topic, k -> new HashSet<>()).add(subscriberAddr);
 
         if (!subscriberMap.containsKey(topic)) {
             // If the subscriberMap doesn't already contain the topic, create a new HashSet for it.
