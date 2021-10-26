@@ -8,13 +8,13 @@ public abstract class Node {
 	// static final String DEFAULT_DST = "localhost";
 
 	// Port numbers
-	// static final int PUB_PORT = 50000;
-	// static final int BKR_PORT = 50001;
-	// static final int SUB_PORT = 50002;
-	// TODO clean up
 	static final int PUB_PORT = 50000;
-	static final int BKR_PORT = 50000;
-	static final int SUB_PORT = 50000;
+	static final int BKR_PORT = 50001;
+	static final int SUB_PORT = 50002;
+	// TODO clean up
+	// static final int PUB_PORT = 50000;
+	// static final int BKR_PORT = 50000;
+	// static final int SUB_PORT = 50000;
 
 	static final int HEADER_LENGTH = 2; // Fixed length of the header
 	static final int TYPE_POS = 0; // Position of the type within the header
@@ -53,6 +53,7 @@ public abstract class Node {
 		return data;
 	}
 
+	// TODO rename and have one to get topic and one to get payload
 	protected String getStringData(byte[] data) {
         byte[] buffer = new byte[data[LENGTH_POS]];
 		System.arraycopy(data, HEADER_LENGTH, buffer, 0, buffer.length);
@@ -85,7 +86,6 @@ public abstract class Node {
 				while(true) {
 					DatagramPacket packet = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
 					socket.receive(packet);
-
 					onReceipt(packet);
 				}
 			} catch (Exception e) {if (!(e instanceof SocketException)) e.printStackTrace();}

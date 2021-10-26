@@ -27,6 +27,7 @@ public class Broker extends Node {
             switch(data[TYPE_POS]) {
                 case PUBLISH:
                     System.out.println("Received request to publish");
+                    System.out.println("Packet size: " + packet.getLength());
                     sendMessage(data, packet);
                     break;
                 case SUBSCRIBE:
@@ -47,17 +48,21 @@ public class Broker extends Node {
 
     // Sender code - publish code
     public synchronized void sendMessage(byte[] receivedData, DatagramPacket receivedPacket) throws Exception {
-        // byte[] receivedData = receivedPacket.getData();
-        byte[] buffer = new byte[receivedData[LENGTH_POS]];
-		System.arraycopy(receivedData, HEADER_LENGTH, buffer, 0, buffer.length);
-		String content = new String(buffer);
+        // byte[] buffer = new byte[receivedData[LENGTH_POS]];
+		// System.arraycopy(receivedData, HEADER_LENGTH, buffer, 0, buffer.length);
+		// String content = new String(buffer);
 
         // Need this or else packet size will be max of 6500
-        byte[] buffer2 = content.getBytes();
-        byte[] data = new byte[HEADER_LENGTH+buffer2.length];
-        data[TYPE_POS] = PUBLISH;
-        data[LENGTH_POS] = (byte)buffer2.length;
-        System.arraycopy(buffer2, 0, data, HEADER_LENGTH, buffer2.length);
+        // byte[] buffer2 = content.getBytes();
+        // byte[] data = new byte[HEADER_LENGTH+buffer2.length];
+        // data[TYPE_POS] = PUBLISH;
+        // data[LENGTH_POS] = (byte)buffer2.length;
+        // System.arraycopy(buffer2, 0, data, HEADER_LENGTH, buffer2.length);
+
+        byte[] buffer = new byte[receivedPacket.getLength()-HEADER_LENGTH];
+        System.out.println("Packet size: " + receivedPacket.getLength());
+        System.arraycopy(receivedData, HEADER_LENGTH, buffer, 0, buffer.length);
+		String content = new String(buffer);
 
         String[] splitContent = content.split(":");
         String topic = splitContent[0];
@@ -78,7 +83,8 @@ public class Broker extends Node {
                 Iterator<InetSocketAddress> i = subscribers.iterator();
                 while(i.hasNext()) {
                     InetSocketAddress addr = i.next();
-                    DatagramPacket packet= new DatagramPacket(data, data.length, addr);
+                    // DatagramPacket packet= new DatagramPacket(data, data.length, addr);
+                    DatagramPacket packet= new DatagramPacket(receivedPacket.getData(), receivedPacket.getLength(), addr);
                     socket.send(packet);
                     // System.out.println("Packet sent");
                     System.out.println("Packet \"" + content + "\" send to " + addr);
