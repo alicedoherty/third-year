@@ -5,7 +5,6 @@ import java.util.concurrent.CountDownLatch;
 
 public abstract class Node {
 	static final int PACKETSIZE = 65000;
-	// static final String DEFAULT_DST = "localhost";
 
 	// Port numbers
 	static final int PUB_PORT = 50000;
@@ -16,9 +15,14 @@ public abstract class Node {
 	// static final int BKR_PORT = 50000;
 	// static final int SUB_PORT = 50000;
 
-	static final int HEADER_LENGTH = 2; // Fixed length of the header
-	static final int TYPE_POS = 0; // Position of the type within the header
-	static final int LENGTH_POS = 1;
+	static final int CONTROL_HEADER_LENGTH = 2; // Fixed length of the control header
+	static final int TYPE_POS = 0; 				// Position of the type within the header
+	static final int RETAIN_FLAG = 1;
+
+	static final byte FALSE = 0;
+	static final byte TRUE = 1;
+
+	// static final int LENGTH_POS = 1;
 
 	// Packet types
 	// TODO update numbers
@@ -43,20 +47,22 @@ public abstract class Node {
 
 	public abstract void onReceipt(DatagramPacket packet);
 
-	// TODO rename these functions
+	// TODO rename these functions - see if they need to be in Node
 
-	protected byte[] getDataByteArray(String message) {
+	protected byte[] makeDataByteArray(String message) {
 		byte[] buffer = message.getBytes();
-		byte[] data = new byte[HEADER_LENGTH + buffer.length];
-		data[LENGTH_POS] = (byte) buffer.length;
-		System.arraycopy(buffer, 0, data, HEADER_LENGTH, buffer.length);
+		byte[] data = new byte[CONTROL_HEADER_LENGTH + buffer.length];
+		// data[LENGTH_POS] = (byte) buffer.length;
+		System.arraycopy(buffer, 0, data, CONTROL_HEADER_LENGTH, buffer.length);
 		return data;
 	}
 
 	// TODO rename and have one to get topic and one to get payload
-	protected String getStringData(byte[] data) {
-        byte[] buffer = new byte[data[LENGTH_POS]];
-		System.arraycopy(data, HEADER_LENGTH, buffer, 0, buffer.length);
+	protected String getStringData(byte[] data, DatagramPacket packet) {
+        //byte[] buffer = new byte[data[LENGTH_POS]];
+		byte[] buffer = new byte[packet.getLength()];
+		System.out.println("String data: " + packet.getLength());
+		System.arraycopy(data, CONTROL_HEADER_LENGTH, buffer, 0, buffer.length);
 		String string = new String(buffer);
 		return string;
 	}

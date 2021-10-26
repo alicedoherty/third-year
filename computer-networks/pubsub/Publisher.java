@@ -1,17 +1,15 @@
-// Client.java
-
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
-import java.util.Random;
 import java.util.Scanner;
+
+// TODO comment functions
 
 public class Publisher extends Node {
 	InetSocketAddress dstAddress;
 
 	Publisher() {
 		try {
-			// String IP = "192.168.10.30";
 			String IP = "localhost";
 			dstAddress = new InetSocketAddress(IP, BKR_PORT);
 			//dstAddress = new InetSocketAddress("broker", BKR_PORT);
@@ -38,12 +36,15 @@ public class Publisher extends Node {
 
 	// Publish message to broker
 	public synchronized void sendMessage(String message) throws Exception {
-		byte[] buffer = message.getBytes();
-		byte[] data = new byte[HEADER_LENGTH + buffer.length];
+		// byte[] buffer = message.getBytes();
+		// byte[] data = new byte[HEADER_LENGTH + buffer.length];
 
+		// data[TYPE_POS] = PUBLISH;
+		// data[LENGTH_POS] = (byte) buffer.length;
+		// System.arraycopy(buffer, 0, data, HEADER_LENGTH, buffer.length);
+
+		byte[] data = makeDataByteArray(message);
 		data[TYPE_POS] = PUBLISH;
-		data[LENGTH_POS] = (byte) buffer.length;
-		System.arraycopy(buffer, 0, data, HEADER_LENGTH, buffer.length);
 
 		DatagramPacket packet = new DatagramPacket(data, data.length, dstAddress);
 		socket.send(packet);
@@ -67,21 +68,6 @@ public class Publisher extends Node {
 				sendMessage(input);
 			}	
 		}
-
-		// Random rand = new Random();
-		// int upperBound = 50;
-
-		// for(int i = 0; i < 20; i++) {
-		// 	int randomInt = rand.nextInt(upperBound);
-
-		// 	if(i % 3 == 0) {
-		// 		sendMessage("humidity " + randomInt);
-		// 	} 
-		// 	else {
-		// 		sendMessage("temperature " + randomInt);
-		// 	}
-		// 	Thread.sleep(2000);
-		// }
 	}
 
 	public static void main(String[] args) {

@@ -27,7 +27,7 @@ public class Subscriber extends Node {
 
 			switch(data[TYPE_POS]) {
 				case PUBLISH:
-					String content = getStringData(data);
+					String content = getStringData(data, packet);
 					// Check for null pointer if something with no payload is sent
 					String[] contentSplit = content.split(":");
 					System.out.println("Received payload \"" + contentSplit[1] + "\" with the topic \"" + contentSplit[0] + "\"");
@@ -47,7 +47,7 @@ public class Subscriber extends Node {
 	}
 
 	public synchronized void sendSubscriptionRequest(String message) throws Exception {
-		byte[] data = getDataByteArray(message);
+		byte[] data = makeDataByteArray(message);
 		data[TYPE_POS] = SUBSCRIBE;
 
 		DatagramPacket packet = new DatagramPacket(data, data.length, dstAddress);
@@ -56,7 +56,7 @@ public class Subscriber extends Node {
 	}
 
 	public synchronized void sendUnsubscriptionRequest(String message) throws Exception {
-		byte[] data = getDataByteArray(message);
+		byte[] data = makeDataByteArray(message);
 		data[TYPE_POS] = UNSUBSCRIBE;
 
 		DatagramPacket packet = new DatagramPacket(data, data.length, dstAddress);
