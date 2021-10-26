@@ -64,6 +64,8 @@ public abstract class Node {
 		return string;
 	}
 
+	// TODO add separate getTopic and getPayload functions
+	
 	/**
 	 *
 	 * Listener thread
