@@ -40,11 +40,16 @@ public class Publisher extends Node {
 	}
 
 	// Publish message to broker
-	public synchronized void sendMessage(String message) throws Exception {
+	public synchronized void sendMessage(String message, String retainChoice) throws Exception {
 		byte[] data = makeDataByteArray(message);
 		data[TYPE_POS] = PUBLISH;
-		data[RETAIN_FLAG] = TRUE;
 
+		if(retainChoice.equalsIgnoreCase("y")) {
+			data[RETAIN_FLAG] = TRUE;
+		} else if(retainChoice.equalsIgnoreCase("n")) {
+			data[RETAIN_FLAG] = FALSE;
+		}
+		
 		DatagramPacket packet = new DatagramPacket(data, data.length, dstAddress);
 		socket.send(packet);
 
@@ -62,7 +67,7 @@ public class Publisher extends Node {
 		TimerTask resendPacket = new TimerTask() {
 			public void run() {
 				try {
-					sendMessage(storedMessage);
+					sendMessage(storedMessage, "y");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -88,7 +93,9 @@ public class Publisher extends Node {
 			if(input.equalsIgnoreCase("exit")) {
 				finished = true;
 			} else {
-				sendMessage(input);
+				System.out.println("Would you like to set the RETAIN flag? (y/n)");
+				String retainChoice = scanner.nextLine();
+				sendMessage(input, retainChoice);
 			}	
 		}
 		scanner.close();
