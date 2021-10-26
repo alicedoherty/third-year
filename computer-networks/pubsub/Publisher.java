@@ -14,9 +14,9 @@ public class Publisher extends Node {
 
 	Publisher() {
 		try {
-			String IP = "localhost";
-			dstAddress = new InetSocketAddress(IP, BKR_PORT);
-			//dstAddress = new InetSocketAddress("broker", BKR_PORT);
+			//String IP = "localhost";
+			//dstAddress = new InetSocketAddress(IP, BKR_PORT);
+			dstAddress = new InetSocketAddress("broker", BKR_PORT);
 			socket = new DatagramSocket(PUB_PORT);
 			listener.go();
 		} catch (java.lang.Exception e) {
@@ -43,6 +43,7 @@ public class Publisher extends Node {
 	public synchronized void sendMessage(String message) throws Exception {
 		byte[] data = makeDataByteArray(message);
 		data[TYPE_POS] = PUBLISH;
+		data[RETAIN_FLAG] = TRUE;
 
 		DatagramPacket packet = new DatagramPacket(data, data.length, dstAddress);
 		socket.send(packet);
@@ -78,7 +79,7 @@ public class Publisher extends Node {
 
 		Scanner scanner = new Scanner(System.in);
 		boolean finished = false;
-		
+
 		while(!finished) {
 			System.out.println("Enter data to be published (topic:payload): ");
 

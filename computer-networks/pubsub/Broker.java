@@ -10,6 +10,7 @@ import java.util.Iterator;
 public class Broker extends Node {
     InetSocketAddress dstAddress;
     private Map<String, HashSet<InetSocketAddress>> subscriberMap;
+    private Map<String, byte[]> retainedMessageMap;
     
     Broker() {
 		try {
@@ -18,6 +19,7 @@ public class Broker extends Node {
 		}
 		catch(java.lang.Exception e) {e.printStackTrace();}
         subscriberMap = new HashMap<String, HashSet<InetSocketAddress>>();
+        retainedMessageMap = new HashMap<String, byte[]>();
 	}
 
     // Receiver code
@@ -28,15 +30,18 @@ public class Broker extends Node {
             switch(data[TYPE_POS]) {
                 case PUBLISH:
                     System.out.println("Received request to publish");
-                    sendMessage(data, packet);
+                    sendMessage(packet);
+                    if(data[RETAIN_FLAG] == TRUE) {
+                        retainMessage(packet);
+                    }
                     break;
                 case SUBSCRIBE:
                     System.out.println("Received request to subscribe");
-                    subscribe(data, packet);
+                    subscribe(packet);
                     break;
                 case UNSUBSCRIBE:
                     System.out.println("Received request to unsubscribe");
-                    unsubscribe(data, packet);
+                    unsubscribe(packet);
                     break;
                 default:
                     System.out.println("Received unexpected packet" + packet.toString());
@@ -46,8 +51,40 @@ public class Broker extends Node {
         catch(Exception e) {e.printStackTrace();}
 	}
 
+    private void retainMessage(DatagramPacket packet) {
+        byte[] data = packet.getData();
+        String content = getStringData(data, packet);
+        String[] splitContent = content.split(":");
+
+        retainedMessageMap.put(splitContent[0], data);
+
+        // System.out.println("The following topics have retained messages:");
+        // for(String topic : retainedMessageMap.keySet()) {
+        //     System.out.println(topic);
+        // }
+    }
+
+    private void sendOutRetainedMessage(String topic, DatagramPacket subPacket) throws IOException {
+        for(Map.Entry<String, byte[]> entry : retainedMessageMap.entrySet()) {
+            String retainedTopic = entry.getKey();
+            String regexTopic = topic.replace("*", ".*?");
+
+            System.out.println("topic: " + topic);
+            System.out.println("retainedTopic: " + retainedTopic);
+            System.out.println("retainedRegexTopic: " + regexTopic);
+
+            if(retainedTopic.matches(regexTopic)) {
+                byte[] retainedData = entry.getValue();
+                InetSocketAddress dstAddress = (InetSocketAddress) subPacket.getSocketAddress();
+                DatagramPacket packet = new DatagramPacket(retainedData, retainedData.length, dstAddress);
+                socket.send(packet);
+            }
+        }
+    }
+
     // Sender code - publish code
-    public synchronized void sendMessage(byte[] receivedData, DatagramPacket receivedPacket) throws Exception {
+    public synchronized void sendMessage(DatagramPacket receivedPacket) throws Exception {
+        byte[] receivedData = receivedPacket.getData();
         byte[] buffer = new byte[receivedPacket.getLength()-CONTROL_HEADER_LENGTH];
         System.arraycopy(receivedData, CONTROL_HEADER_LENGTH, buffer, 0, buffer.length);
 		String content = new String(buffer);
@@ -83,7 +120,8 @@ public class Broker extends Node {
 
     // getTopic() function to implement
 
-    private void subscribe(byte[] data, DatagramPacket packet) throws IOException {
+    private void subscribe(DatagramPacket packet) throws IOException {
+        byte[] data = packet.getData();
         InetSocketAddress subscriberAddr = (InetSocketAddress) packet.getSocketAddress();
         String topic = getStringData(data, packet);
 
@@ -103,10 +141,14 @@ public class Broker extends Node {
         while(i.hasNext()) {
             System.out.println(i.next());
         }
+
+        sendOutRetainedMessage(topic, packet);
+
         sendAck(SUBACK, packet);       
     }
 
-    private void unsubscribe(byte[] data, DatagramPacket packet) throws IOException {
+    private void unsubscribe(DatagramPacket packet) throws IOException {
+        byte[] data = packet.getData();
         InetSocketAddress subscriberAddr = (InetSocketAddress) packet.getSocketAddress();
         String topic = getStringData(data, packet);
 

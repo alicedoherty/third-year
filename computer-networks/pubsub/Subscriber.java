@@ -14,10 +14,9 @@ public class Subscriber extends Node {
 
 	Subscriber() {
 		try {
-			// String IP = "192.168.10.30";
-			String IP = "localhost";
-			dstAddress = new InetSocketAddress(IP, BKR_PORT);
-			//dstAddress = new InetSocketAddress("broker", BKR_PORT);
+			//String IP = "localhost";
+			//dstAddress = new InetSocketAddress(IP, BKR_PORT);
+			dstAddress = new InetSocketAddress("broker", BKR_PORT);
 			socket= new DatagramSocket(SUB_PORT);
 			listener.go();
 		}
@@ -38,11 +37,11 @@ public class Subscriber extends Node {
 					break;
 				case SUBACK:
 					System.out.println("Received subscribe ack from broker");
-					timer.cancel();
+					// timer.cancel();
 					break;
 				case UNSUBACK:
 					System.out.println("Received unsubscribe ack from broker");
-					timer.cancel();
+					// timer.cancel();
 					break;
 				default:
 					System.out.println("Unexpected packet" + packet.toString());
@@ -60,7 +59,7 @@ public class Subscriber extends Node {
 		System.out.println("Subscribe request packet sent...");
 
 		storedRequest = message;
-		startTimer(SUBSCRIBE);
+		// startTimer(SUBSCRIBE);
 	}
 
 	public synchronized void sendUnsubscriptionRequest(String message) throws Exception {
@@ -72,14 +71,13 @@ public class Subscriber extends Node {
 		System.out.println("Unsubscribe request packet sent...");
 
 		storedRequest = message;
-		startTimer(UNSUBSCRIBE);
+		// startTimer(UNSUBSCRIBE);
 	}
 
 	// Doesn't actually work at the moment
 	private void startTimer(byte requestType) {
 		TimerTask resendRequest = new TimerTask() {
 			public void run() {
-				System.out.println("time up");
 				switch(requestType) {
 					case SUBSCRIBE:
 						try {
