@@ -7,13 +7,13 @@ public abstract class Node {
 	static final int PACKETSIZE = 65000;
 
 	// Port numbers
-	// static final int PUB_PORT = 50000;
-	// static final int BKR_PORT = 50001;
-	// static final int SUB_PORT = 50002;
-	// TODO clean up
 	static final int PUB_PORT = 50000;
-	static final int BKR_PORT = 50000;
-	static final int SUB_PORT = 50000;
+	static final int BKR_PORT = 50001;
+	static final int SUB_PORT = 50002;
+	// TODO clean up
+	// static final int PUB_PORT = 50000;
+	// static final int BKR_PORT = 50000;
+	// static final int SUB_PORT = 50000;
 
 	static final int CONTROL_HEADER_LENGTH = 2; // Fixed length of the control header
 	static final int TYPE_POS = 0; 				// Position of the type within the header

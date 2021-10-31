@@ -14,7 +14,7 @@ public class Broker extends Node {
     
     Broker() {
 		try {
-			socket= new DatagramSocket(BKR_PORT);
+			socket = new DatagramSocket(BKR_PORT);
 			listener.go();
 		}
 		catch(java.lang.Exception e) {e.printStackTrace();}
@@ -23,7 +23,6 @@ public class Broker extends Node {
 	}
 
     // Receiver code
-    // TODO check if you need to be passing in data and packet everywhere!!
     public synchronized void onReceipt(DatagramPacket packet) {
         try {
             byte[] data = packet.getData();
@@ -68,10 +67,6 @@ public class Broker extends Node {
         for(Map.Entry<String, byte[]> entry : retainedMessageMap.entrySet()) {
             String retainedTopic = entry.getKey();
             String regexTopic = topic.replace("*", ".*?");
-
-            System.out.println("topic: " + topic);
-            System.out.println("retainedTopic: " + retainedTopic);
-            System.out.println("retainedRegexTopic: " + regexTopic);
 
             if(retainedTopic.matches(regexTopic)) {
                 byte[] retainedData = entry.getValue();
@@ -152,7 +147,7 @@ public class Broker extends Node {
         InetSocketAddress subscriberAddr = (InetSocketAddress) packet.getSocketAddress();
         String topic = getStringData(data, packet);
 
-        // Check that it's subscribed to first - null ptr exception
+        // TODO Check that it's subscribed to first - null ptr exception
         if (subscriberMap.get(topic).remove(subscriberAddr))
             System.out.println("Subscription to " + topic + " removed successfully.");
 

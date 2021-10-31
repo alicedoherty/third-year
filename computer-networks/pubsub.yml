@@ -6,8 +6,6 @@ services:
     container_name: publisher1
     image: java
     restart: "no"
-#    ports:
-#      - 9000:9000
     volumes:
       - ./pubsub:/pubsub
     networks:
@@ -19,8 +17,6 @@ services:
     container_name: publisher2
     image: java
     restart: "no"
-#    ports:
-#      - 9000:9000
     volumes:
       - ./pubsub:/pubsub
     networks:
@@ -33,8 +29,6 @@ services:
     container_name: broker
     image: java
     restart: "no"
-#    ports:
-#      - 1880:1880
     volumes:
       - ./pubsub:/pubsub
     networks:
@@ -65,29 +59,7 @@ services:
         ipv4_address: 192.168.10.50
     command: tail -f /dev/null
 
-# https://hub.docker.com/r/linuxserver/wireshark
-# user/password  :  abc/abc
-  # wireshark:
-  #   image: ghcr.io/linuxserver/wireshark
-  #   container_name: wireshark
-  #   cap_add:
-  #     - NET_ADMIN
-  #   # networks:
-  #   #   pubsub:
-  #   #     ipv4_address: 192.168.10.2
-  #   # build:
-  #   #   context: .
-  #   #   network: host
-  #   network_mode: host
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=Europe/London
-  #   volumes:
-  #     - ./wireshark/config:/config
-  #   ports:
-  #     - 3000:3000 #optional
-  #   restart: unless-stopped
+# tcpdump is used to capture network traffic in PCAP file
   tcpdump:
     container_name: tcpdump
     image: kaazing/tcpdump

@@ -14,9 +14,8 @@ public class Publisher extends Node {
 
 	Publisher() {
 		try {
-			//String IP = "localhost";
-			//dstAddress = new InetSocketAddress(IP, BKR_PORT);
-			dstAddress = new InetSocketAddress("broker", BKR_PORT);
+			dstAddress = new InetSocketAddress("localhost", BKR_PORT);
+			//dstAddress = new InetSocketAddress("broker", BKR_PORT);
 			socket = new DatagramSocket(PUB_PORT);
 			listener.go();
 		} catch (java.lang.Exception e) {
@@ -86,7 +85,7 @@ public class Publisher extends Node {
 		boolean finished = false;
 
 		while(!finished) {
-			System.out.println("Enter data to be published (topic:payload): ");
+			System.out.println("Enter data to be published (topic:payload), or enter \"exit\": ");
 
 			String input = scanner.nextLine();
 

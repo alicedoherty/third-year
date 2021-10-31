@@ -14,9 +14,8 @@ public class Subscriber extends Node {
 
 	Subscriber() {
 		try {
-			//String IP = "localhost";
-			//dstAddress = new InetSocketAddress(IP, BKR_PORT);
-			dstAddress = new InetSocketAddress("broker", BKR_PORT);
+			dstAddress = new InetSocketAddress("localhost", BKR_PORT);
+			//dstAddress = new InetSocketAddress("broker", BKR_PORT);
 			socket= new DatagramSocket(SUB_PORT);
 			listener.go();
 		}
