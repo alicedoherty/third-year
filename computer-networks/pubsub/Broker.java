@@ -131,7 +131,6 @@ public class Broker extends Node {
             // If the subscriberMap doesn't already contain the topic, create a new HashSet for it.
             HashSet<InetSocketAddress> subscribers = new HashSet<InetSocketAddress>();
             subscriberMap.put(topic, subscribers);
-
         }
 
         if (subscriberMap.get(topic).add(subscriberAddr))
