@@ -1,3 +1,6 @@
+// Alice Doherty
+// Student Number: 19333356
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
@@ -6,26 +9,16 @@ import java.util.concurrent.CountDownLatch;
 public abstract class Node {
 	static final int PACKETSIZE = 65000;
 
-	// Port numbers
-	static final int PUB_PORT = 50000;
-	static final int BKR_PORT = 50001;
-	static final int SUB_PORT = 50002;
-	// TODO clean up
-	// static final int PUB_PORT = 50000;
-	// static final int BKR_PORT = 50000;
-	// static final int SUB_PORT = 50000;
+	static final int PORT = 50000; 				// Port number
 
-	static final int CONTROL_HEADER_LENGTH = 2; // Fixed length of the control header
+	static final int CONTROL_HEADER_LENGTH = 2;	// Fixed length of the control header
 	static final int TYPE_POS = 0; 				// Position of the type within the header
-	static final int RETAIN_FLAG = 1;
+	static final int RETAIN_FLAG = 1;			// Position of the retain flag within the header
 
 	static final byte FALSE = 0;
 	static final byte TRUE = 1;
 
-	// static final int LENGTH_POS = 1;
-
-	// Packet types
-	// TODO update numbers
+	// Packet Types
 	static final byte PUBLISH = 1;
 	static final byte PUBACK = 2;
 	static final byte SUBSCRIBE = 3;
@@ -47,8 +40,6 @@ public abstract class Node {
 
 	public abstract void onReceipt(DatagramPacket packet);
 
-	// TODO rename these functions - see if they need to be in Node
-
 	protected byte[] makeDataByteArray(String message) {
 		byte[] buffer = message.getBytes();
 		byte[] data = new byte[CONTROL_HEADER_LENGTH + buffer.length];
@@ -56,15 +47,12 @@ public abstract class Node {
 		return data;
 	}
 
-	// TODO rename and have one to get topic and one to get payload
 	protected String getStringData(byte[] data, DatagramPacket packet) {
 		byte[] buffer = new byte[packet.getLength()-CONTROL_HEADER_LENGTH];
 		System.arraycopy(data, CONTROL_HEADER_LENGTH, buffer, 0, buffer.length);
 		String string = new String(buffer);
 		return string;
 	}
-
-	// TODO add separate getTopic and getPayload functions
 
 	/**
 	 *

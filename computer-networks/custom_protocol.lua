@@ -1,3 +1,6 @@
+-- Alice Doherty
+-- Student Number: 19333356
+
 cs2031_protocol = Proto("CS2031",  "Alice's Protocol")
 
 packet_type = ProtoField.uint8("cs2031.packet_type", "PacketType", base.DEC)
@@ -65,7 +68,5 @@ function cs2031_protocol.dissector(buffer, pinfo, tree)
 
 end
 
--- TODO change port to 50000
-
 local udp_port = DissectorTable.get("udp.port")
-udp_port:add(50001, cs2031_protocol)
+udp_port:add(50000, cs2031_protocol)

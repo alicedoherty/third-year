@@ -1,4 +1,5 @@
-// Server.java
+// Alice Doherty
+// Student Number: 19333356
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -14,9 +15,8 @@ public class Subscriber extends Node {
 
 	Subscriber() {
 		try {
-			dstAddress = new InetSocketAddress("localhost", BKR_PORT);
-			//dstAddress = new InetSocketAddress("broker", BKR_PORT);
-			socket= new DatagramSocket(SUB_PORT);
+			dstAddress = new InetSocketAddress("broker", PORT);
+			socket= new DatagramSocket(PORT);
 			listener.go();
 		}
 		catch(java.lang.Exception e) {e.printStackTrace();}
@@ -24,13 +24,11 @@ public class Subscriber extends Node {
 
 	public void onReceipt(DatagramPacket packet) {
 		try {
-			//this.notify();
 			byte[] data = packet.getData();
 
 			switch(data[TYPE_POS]) {
 				case PUBLISH:
 					String content = getStringData(data, packet);
-					// Check for null pointer if something with no payload is sent
 					String[] contentSplit = content.split(":");
 					System.out.println("Received payload \"" + contentSplit[1] + "\" with the topic \"" + contentSplit[0] + "\"");
 					break;
@@ -49,6 +47,7 @@ public class Subscriber extends Node {
 		catch(Exception e) {e.printStackTrace();}
 	}
 
+	// Send a subscribe request to the broker
 	public synchronized void sendSubscriptionRequest(String message) throws Exception {
 		byte[] data = makeDataByteArray(message);
 		data[TYPE_POS] = SUBSCRIBE;
@@ -61,6 +60,7 @@ public class Subscriber extends Node {
 		// startTimer(SUBSCRIBE);
 	}
 
+	// Send an unsubscribe request to the broker
 	public synchronized void sendUnsubscriptionRequest(String message) throws Exception {
 		byte[] data = makeDataByteArray(message);
 		data[TYPE_POS] = UNSUBSCRIBE;
@@ -73,7 +73,8 @@ public class Subscriber extends Node {
 		// startTimer(UNSUBSCRIBE);
 	}
 
-	// Doesn't actually work at the moment
+	// Due to a bug, the calls to this function are commented out to prevent unintended side effects
+	// However, the logic still stands
 	private void startTimer(byte requestType) {
 		TimerTask resendRequest = new TimerTask() {
 			public void run() {

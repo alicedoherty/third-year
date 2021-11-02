@@ -1,3 +1,6 @@
+// Alice Doherty
+// Student Number: 19333356
+
 import java.net.DatagramSocket;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -14,7 +17,7 @@ public class Broker extends Node {
     
     Broker() {
 		try {
-			socket = new DatagramSocket(BKR_PORT);
+			socket = new DatagramSocket(PORT);
 			listener.go();
 		}
 		catch(java.lang.Exception e) {e.printStackTrace();}
@@ -50,6 +53,7 @@ public class Broker extends Node {
         catch(Exception e) {e.printStackTrace();}
 	}
 
+    // If the retain flag is set, insert the topic and message of the packet into retainedMessageMap
     private void retainMessage(DatagramPacket packet) {
         byte[] data = packet.getData();
         String content = getStringData(data, packet);
@@ -63,6 +67,8 @@ public class Broker extends Node {
         // }
     }
 
+    // If a subscriber has just subscribed to a topic, check if that topic has a retained message,
+    // if so send it to that subscriber
     private void sendOutRetainedMessage(String topic, DatagramPacket subPacket) throws IOException {
         for(Map.Entry<String, byte[]> entry : retainedMessageMap.entrySet()) {
             String retainedTopic = entry.getKey();
@@ -77,7 +83,7 @@ public class Broker extends Node {
         }
     }
 
-    // Sender code - publish code
+    // Forward packets from publisher to relevant subscribers
     public synchronized void sendMessage(DatagramPacket receivedPacket) throws Exception {
         byte[] receivedData = receivedPacket.getData();
         byte[] buffer = new byte[receivedPacket.getLength()-CONTROL_HEADER_LENGTH];
@@ -89,6 +95,7 @@ public class Broker extends Node {
             
         for (Map.Entry<String, HashSet<InetSocketAddress>> entry : subscriberMap.entrySet()) {
             String subscriberTopic = entry.getKey();
+            // Convert topic to regex to ensure accurate matching for wildcards
             String regexSubscriberTopic = subscriberTopic.replace("*", ".*?");
 
             if(topic.matches(regexSubscriberTopic)) {
@@ -98,13 +105,14 @@ public class Broker extends Node {
                     InetSocketAddress addr = i.next();
                     DatagramPacket packet= new DatagramPacket(receivedPacket.getData(), receivedPacket.getLength(), addr);
                     socket.send(packet);
-                    System.out.println("Packet \"" + content + "\" send to " + addr);
+                    System.out.println("Packet \"" + content + "\" sent to " + addr);
                 }
             }
         }
         sendAck(PUBACK, receivedPacket);
 	}
 
+    // Send ACK to publisher/subscriber
     private void sendAck(byte ackType, DatagramPacket packet) throws IOException {
         byte[] data = new byte[1];
         data[TYPE_POS] = ackType;
@@ -113,8 +121,7 @@ public class Broker extends Node {
         socket.send(ack);
     }
 
-    // getTopic() function to implement
-
+    // Subscribe to requested topic
     private void subscribe(DatagramPacket packet) throws IOException {
         byte[] data = packet.getData();
         InetSocketAddress subscriberAddr = (InetSocketAddress) packet.getSocketAddress();
@@ -142,12 +149,12 @@ public class Broker extends Node {
         sendAck(SUBACK, packet);       
     }
 
+    // Unsubscribe to requested topic
     private void unsubscribe(DatagramPacket packet) throws IOException {
         byte[] data = packet.getData();
         InetSocketAddress subscriberAddr = (InetSocketAddress) packet.getSocketAddress();
         String topic = getStringData(data, packet);
 
-        // TODO Check that it's subscribed to first - null ptr exception
         if (subscriberMap.get(topic).remove(subscriberAddr))
             System.out.println("Subscription to " + topic + " removed successfully.");
 

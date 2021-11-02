@@ -1,11 +1,12 @@
+// Alice Doherty
+// Student Number: 19333356
+
 import java.net.DatagramSocket;
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
-
-// TODO comment functions
 
 public class Publisher extends Node {
 	InetSocketAddress dstAddress;
@@ -14,9 +15,8 @@ public class Publisher extends Node {
 
 	Publisher() {
 		try {
-			dstAddress = new InetSocketAddress("localhost", BKR_PORT);
-			//dstAddress = new InetSocketAddress("broker", BKR_PORT);
-			socket = new DatagramSocket(PUB_PORT);
+			dstAddress = new InetSocketAddress("broker", PORT);
+			socket = new DatagramSocket(PORT);
 			listener.go();
 		} catch (java.lang.Exception e) {
 			e.printStackTrace();
@@ -38,11 +38,12 @@ public class Publisher extends Node {
 		catch(Exception e) {e.printStackTrace();}
 	}
 
-	// Publish message to broker
+	// Publish message to the broker
 	public synchronized void sendMessage(String message, String retainChoice) throws Exception {
 		byte[] data = makeDataByteArray(message);
 		data[TYPE_POS] = PUBLISH;
 
+		// Set the retain flag to TRUE or FALSE depending on the user's choice
 		if(retainChoice.equalsIgnoreCase("y")) {
 			data[RETAIN_FLAG] = TRUE;
 		} else if(retainChoice.equalsIgnoreCase("n")) {
