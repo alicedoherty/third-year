@@ -82,6 +82,7 @@ public abstract class Node {
 	protected static final int PACKETSIZE = 65000;
     protected static final int PORT_NUMBER = 51510;
     protected static final String LOCALHOST = "localhost";
+	protected static final int CONTROL_HEADER_LENGTH = 2;
 
     //
     // Forwarding table info indexes
@@ -95,8 +96,22 @@ public abstract class Node {
     //
     // Header info indexes (TLV)
     //
-    protected static final int TYPE = 1;
-    protected static final int LENGTH = 2;
+    protected static final int TYPE = 0;
+    protected static final int LENGTH = 1;
+
+	protected static final byte NETWORK_ID = 1;
+
+	//
+	// IPv4 Addressses
+	//
+	protected static final String E1 = "/192.168.10.10:51510";
+	protected static final String E4 = "/192.168.10.20:51510";
+
+	protected static final String R1 = "/192.168.10.30:51510";
+	protected static final String R2 = "/192.168.10.40:51510";
+	protected static final String R3 = "/192.168.10.50:51510";
+	protected static final String R4 = "/192.168.10.60:51510";
+
 
 	DatagramSocket socket;
 	Listener listener;
@@ -109,8 +124,14 @@ public abstract class Node {
 		listener.start();
 	}
 
-
 	public abstract void onReceipt(DatagramPacket packet);
+
+	protected byte[] makeDataByteArray(String message) {
+		byte[] buffer = message.getBytes();
+		byte[] data = new byte[CONTROL_HEADER_LENGTH + buffer.length];
+		System.arraycopy(buffer, 0, data, CONTROL_HEADER_LENGTH, buffer.length);
+		return data;
+	}
 
 	/**
 	 *

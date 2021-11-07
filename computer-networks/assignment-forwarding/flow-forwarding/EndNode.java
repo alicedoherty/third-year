@@ -1,12 +1,11 @@
 import java.net.DatagramSocket;
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.Scanner;
 
 public class EndNode extends Node {
-    private InetSocketAddress dstAddress;
-
     EndNode() {
         try {
             socket = new DatagramSocket(PORT_NUMBER);
@@ -17,16 +16,39 @@ public class EndNode extends Node {
     }
 
     public synchronized void onReceipt(DatagramPacket packet) {
+        byte[] data = packet.getData();
+        String stringData = new String(data);
+        System.out.println(stringData);
     }
 
-    public synchronized void sendMessage() {
+    public synchronized void sendMessage() throws IOException {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter the node you want to send a message to: ");
+        System.out.println("Enter the destination you want to send a message to: ");
+        // trinity
+        String destination = scanner.nextLine();
 
+        System.out.println("Enter the message you want to send to " + destination + ":");
+        String message = scanner.nextLine();
 
+        String stringData = destination + message;
+
+        byte[] data = makeDataByteArray(stringData);
+        data[TYPE] = NETWORK_ID;
+        data[LENGTH] = (byte) destination.length();
+
+        InetSocketAddress dstAddress = new InetSocketAddress("R1", PORT_NUMBER);
+        DatagramPacket packet = new DatagramPacket(data, data.length, dstAddress);
+        socket.send(packet);
+
+        System.out.println("Message "+ message + " sent to " + destination);
     }
 
-    private void start() {
+    // Set header using type-length-value format
+    // private void setHeaderInfo() {
+
+    // }
+
+    private void start() throws IOException {
         System.out.println("EndNode program starting...");
 
         Scanner scanner = new Scanner(System.in);
@@ -40,10 +62,10 @@ public class EndNode extends Node {
 
             if (choice.equalsIgnoreCase("SEND")) {
                 sendMessage();
-                finished = true;
+                // finished = true;
             } else if (choice.equalsIgnoreCase("WAIT")) {
                 System.out.println("Waiting for messages...");
-                finished = true;
+                // finished = true;
             } else if (choice.equalsIgnoreCase("exit")) {
                 System.out.println("Goodbye ;(");
                 finished = true;

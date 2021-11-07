@@ -1,0 +1,90 @@
+# Alice Doherty
+# Student Number: 19333356
+
+version: '2'
+services:
+
+# End-Users
+  E1:
+    container_name: E1
+    image: java
+    restart: "no"
+    volumes:
+      - ./flow-forwarding:/flow-forwarding
+    networks:
+      flow-forwarding:
+        ipv4_address: 192.168.10.10
+    command: tail -f /dev/null
+
+  E4:
+    container_name: E4
+    image: java
+    restart: "no"
+    volumes:
+      - ./flow-forwarding:/flow-forwarding
+    networks:
+      flow-forwarding:
+        ipv4_address: 192.168.10.20
+    command: tail -f /dev/null
+
+# Routers
+  R1:
+    container_name: R1
+    image: java
+    restart: "no"
+    volumes:
+      - ./flow-forwarding:/flow-forwarding
+    networks:
+      flow-forwarding:
+        ipv4_address: 192.168.10.30
+    command: tail -f /dev/null
+
+  R2:
+    container_name: R2
+    image: java
+    restart: "no"
+    volumes:
+      - ./flow-forwarding:/flow-forwarding
+    networks:
+      flow-forwarding:
+        ipv4_address: 192.168.10.40
+    command: tail -f /dev/null
+
+  R3:
+    container_name: R3
+    image: java
+    restart: "no"
+    volumes:
+      - ./flow-forwarding:/flow-forwarding
+    networks:
+      flow-forwarding:
+        ipv4_address: 192.168.10.50
+    command: tail -f /dev/null
+
+  R4:
+    container_name: R4
+    image: java
+    restart: "no"
+    volumes:
+      - ./flow-forwarding:/flow-forwarding
+    networks:
+      flow-forwarding:
+        ipv4_address: 192.168.10.60
+    command: tail -f /dev/null
+
+# tcpdump is used to capture network traffic in PCAP file
+  tcpdump:
+    container_name: tcpdump
+    image: kaazing/tcpdump
+    network_mode: "host"
+    volumes:
+      - ./tcpdump:/tcpdump
+
+# Network
+networks:
+  flow-forwarding:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.10.0/24
+          gateway: 192.168.10.1
