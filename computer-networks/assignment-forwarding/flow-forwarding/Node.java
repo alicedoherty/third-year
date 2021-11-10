@@ -133,6 +133,14 @@ public abstract class Node {
 		return data;
 	}
 
+	protected String getMessage(byte[] data, DatagramPacket packet) {
+		int dstLength = data[LENGTH];
+		byte[] buffer = new byte[packet.getLength()-CONTROL_HEADER_LENGTH-dstLength];
+		System.arraycopy(data, CONTROL_HEADER_LENGTH+dstLength, buffer, 0, buffer.length);
+		String message = new String(buffer);
+		return message;
+	}
+
 	/**
 	 *
 	 * Listener thread

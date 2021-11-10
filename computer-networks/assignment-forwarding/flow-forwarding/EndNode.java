@@ -17,8 +17,8 @@ public class EndNode extends Node {
 
     public synchronized void onReceipt(DatagramPacket packet) {
         byte[] data = packet.getData();
-        String stringData = new String(data);
-        System.out.println(stringData);
+        String message = getMessage(data, packet);
+        System.out.println("Received message: " + message);
     }
 
     public synchronized void sendMessage() throws IOException {
@@ -48,7 +48,7 @@ public class EndNode extends Node {
 
     // }
 
-    private void start() throws IOException {
+    private synchronized void start() throws IOException, InterruptedException {
         System.out.println("EndNode program starting...");
 
         Scanner scanner = new Scanner(System.in);
@@ -66,6 +66,7 @@ public class EndNode extends Node {
             } else if (choice.equalsIgnoreCase("WAIT")) {
                 System.out.println("Waiting for messages...");
                 // finished = true;
+                this.wait();
             } else if (choice.equalsIgnoreCase("exit")) {
                 System.out.println("Goodbye ;(");
                 finished = true;

@@ -11,7 +11,9 @@ public class Router extends Node {
     String[][] preconfigInfo = {
         {"trinity", E1, R1, E1, R2},
         {"trinity", E1, R2, R1, R4},
-        {"trinity", E1, R4, R2, E4}
+        {"trinity", E1, R4, R2, E4},
+        {"home", E1, R1, E1, R3},
+        {"home", E1, R3, R1, E4}
     };
 
     Router() {
@@ -31,11 +33,13 @@ public class Router extends Node {
         catch(Exception e) {e.printStackTrace();}
     }
 
-    public synchronized void forwardMessage(DatagramPacket receivedPacket) throws IOException {
+    // TODO Get rid of exceptions if getting rid of Thread.sleep()
+    public synchronized void forwardMessage(DatagramPacket receivedPacket) throws IOException, InterruptedException {
         // InetSocketAddress dstAddress = new InetSocketAddress("E2", PORT_NUMBER);
-        
+        Thread.sleep(2000);
+
         String nextHop = getNextHop(receivedPacket);
-        System.out.println("Next hop is: " + nextHop);
+        System.out.println("Next hop for packet is: " + nextHop);
 
         Pattern p = Pattern.compile("^\\s*(.*?):(\\d+)\\s*$");
         Matcher m = p.matcher(nextHop);
@@ -46,8 +50,6 @@ public class Router extends Node {
             nextHopIP = m.group(1);
     
         }
-
-        System.out.println("next hop IP: " + nextHopIP);
 
         InetSocketAddress nextHopAddr = new InetSocketAddress(nextHopIP.substring(1), PORT_NUMBER);
         DatagramPacket packet = new DatagramPacket(receivedPacket.getData(), receivedPacket.getLength(), nextHopAddr);
@@ -60,12 +62,11 @@ public class Router extends Node {
         InetSocketAddress src = (InetSocketAddress) packet.getSocketAddress();
         String srcAddress = src.toString();
 
-        System.out.println("The final destination of this packet is " + destination);
-        System.out.println("The src address is " + srcAddress);
+        System.out.println("The final destination of this packet is: " + destination);
+        System.out.println("Packet came in from: " + srcAddress);
 
         for(int i = 0; i < preconfigInfo.length; i++) {
             if(destination.equals(preconfigInfo[i][0])) {
-                System.out.println(preconfigInfo[i][3]);
                 if(preconfigInfo[i][3].equals(srcAddress)) {
                     return preconfigInfo[i][4];
                 }
