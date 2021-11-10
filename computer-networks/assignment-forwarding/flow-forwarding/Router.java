@@ -36,7 +36,7 @@ public class Router extends Node {
     // TODO Get rid of exceptions if getting rid of Thread.sleep()
     public synchronized void forwardMessage(DatagramPacket receivedPacket) throws IOException, InterruptedException {
         // InetSocketAddress dstAddress = new InetSocketAddress("E2", PORT_NUMBER);
-        Thread.sleep(2000);
+        Thread.sleep(1500);
 
         String nextHop = getNextHop(receivedPacket);
         System.out.println("Next hop for packet is: " + nextHop);
