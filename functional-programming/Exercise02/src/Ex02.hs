@@ -57,7 +57,29 @@ v42 = Val 42 ; j42 = Just v42
   -- see test outcomes for the precise format of those messages
 
 eval :: EDict -> Expr -> Either String Double
-eval d e = error "eval NYI"
+
+eval d (Val x) = Right x
+
+eval d (Var x) = find d x
+
+eval d (Add x y) = absEval d (+) x y
+                       
+eval d (Sub x y) = absEval d (-) x y
+
+eval d (Mul x y) = absEval d (*) x y
+          
+eval d (Dvd x (Val 0)) = Left "div by zero"
+
+eval d (Dvd x y) = absEval d (/) x y
+
+eval d (Def x e1 e2) = case eval d e1 of
+                            Right i -> eval (define d x i) e2
+                            Left i -> Left i
+
+absEval d op x y = case (eval d x, eval d y) of
+                        (Right x, Right y) -> Right (op x y)
+                        (Left x, _) -> Left x
+                        (_, Left y) -> Left y
 
 -- Part 1 : Expression Laws -- (15 test marks, worth 15 Exercise Marks) --------
 
