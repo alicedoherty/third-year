@@ -105,13 +105,18 @@ There are many, many laws of algebra that apply to our expressions, e.g.,
 
 
 law1 :: Expr -> Maybe Expr
-law1 e = error "law1 NYI"
+law1 (Add x y) = Just (Add y x)
+law1 _ = Nothing
 
 law2 :: Expr -> Maybe Expr
-law2 e = error "law2 NYI"
+law2 (Add (Add x y) z) = Just (Add x (Add y z))
+law2 _ = Nothing
 
 law3 :: Expr -> Maybe Expr
-law3 e = error "law3 NYI"
+law3 (Sub (Sub x y) z) = Just (Sub x (Add y z))
+law3 _ = Nothing
 
 law4 :: Expr -> Maybe Expr
-law4 e = error "law4 NYI"
+law4 (Sub (Mul x1 x2) (Mul y1 y2)) | x1 == x2 && y1 == y2 
+  = Just (Mul (Add x1 y1) (Sub x1 y1))
+law4 _ = Nothing
