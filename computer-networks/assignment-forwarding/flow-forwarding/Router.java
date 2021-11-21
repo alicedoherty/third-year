@@ -36,6 +36,18 @@ public class Router extends Node {
         catch(Exception e) {e.printStackTrace();}
     }
 
+    // When Router starts up, register with the Controller by sending hello.
+    public synchronized void sendHello() throws IOException {
+        byte[] data = new byte[1];
+        data[TYPE] = OFPT_HELLO;
+
+        InetSocketAddress dstAddress = new InetSocketAddress("controller", PORT_NUMBER);
+        DatagramPacket packet = new DatagramPacket(data, data.length, dstAddress);
+        socket.send(packet);
+
+        System.out.println("Hello sent to controller");
+    }
+
     // TODO Get rid of exceptions if getting rid of Thread.sleep()
     public synchronized void forwardMessage(DatagramPacket receivedPacket) throws IOException, InterruptedException {
         // Thread.sleep(1500);
@@ -74,9 +86,9 @@ public class Router extends Node {
         String trimmedSource = source.substring(0,2);
         
         for(int i = 0; i < forwardingTable.length; i++) {
-            if(destination.equals(forwardingTable[i][0])) {
-                if(forwardingTable[i][1].equals(trimmedSource)) {
-                    return forwardingTable[i][2];
+            if(destination.equals(forwardingTable[i][DEST])) {
+                if(forwardingTable[i][IN].equals(trimmedSource)) {
+                    return forwardingTable[i][OUT];
                 }
             }
         }
@@ -95,6 +107,7 @@ public class Router extends Node {
 
     public synchronized void start() throws Exception {
         System.out.println("Router program starting...");
+        sendHello();
 		while (true) {
 			this.wait();
 		}

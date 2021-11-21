@@ -4,7 +4,7 @@
 version: '2'
 services:
 
-# End-Users
+# End Users
   E1:
     container_name: E1
     image: java
@@ -70,6 +70,18 @@ services:
     networks:
       flow-forwarding:
         ipv4_address: 192.168.10.60
+    command: tail -f /dev/null
+
+# Controller
+  controller:
+    container_name: controller
+    image: java
+    restart: "no"
+    volumes:
+      - ./flow-forwarding:/flow-forwarding
+    networks:
+      flow-forwarding:
+        ipv4_address: 192.168.10.70
     command: tail -f /dev/null
 
 # tcpdump is used to capture network traffic in PCAP file

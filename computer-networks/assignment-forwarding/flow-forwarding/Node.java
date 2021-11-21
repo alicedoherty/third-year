@@ -85,13 +85,20 @@ public abstract class Node {
 	protected static final int CONTROL_HEADER_LENGTH = 2;
 
     //
-    // Forwarding table info indexes
+    // Preconiguration table info indexes (used by Controller)
     //
     protected static final int DEST_ADDR = 0;
     protected static final int SRC_ADDR = 1;
     protected static final int ROUTER = 2;
     protected static final int ROUTER_IN = 3;
     protected static final int ROUTER_OUT = 4;
+
+	//
+	// Forwarding table info indexes (used by Routers)
+	//
+	protected static final int DEST = 0;
+    protected static final int IN = 1;
+    protected static final int OUT = 2;
 
     //
     // Header info indexes (TLV)
