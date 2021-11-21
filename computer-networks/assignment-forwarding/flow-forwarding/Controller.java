@@ -32,10 +32,8 @@ public class Controller extends Node {
             byte[] data = packet.getData();
             switch(data[TYPE]) {
                 case OFPT_HELLO:
-                    // String original = packet.getAddress().getHostAddress();
                     String source = packet.getAddress().getHostName().substring(0,2);
                     System.out.println("Received hello from router " + source);
-                    // System.out.println("Original router: " + original);
                     registerElement(source);
                     break; 
                 default:
@@ -56,7 +54,6 @@ public class Controller extends Node {
         }
 
         String tableString = String.join(", ", table);
-        System.out.println("Joined table: " + tableString);
         
         // Make into separate function
         byte[] buffer = tableString.getBytes();

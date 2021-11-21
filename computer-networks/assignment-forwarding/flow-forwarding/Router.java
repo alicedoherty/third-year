@@ -51,18 +51,14 @@ public class Router extends Node {
     }
 
     public synchronized void updateForwardingTable(DatagramPacket packet) {
-        System.out.println("Info received from controller:");
-
         // TODO Put into function?
         byte[] data = packet.getData();
         byte[] buffer = new byte[packet.getLength()-1];
         System.arraycopy(data, 1, buffer, 0, buffer.length);
         String forwardingTableString = new String(buffer);
-        System.out.println(forwardingTableString);
 
         // Convert forwardingTableString to a String array
         String[] forwardingTableArray = forwardingTableString.split(", ");
-        System.out.println(forwardingTableArray.length);
 
         // Set forwardingTable
         // TODO add constant for 3?
@@ -73,7 +69,19 @@ public class Router extends Node {
             forwardingTable[j][IN] = forwardingTableArray[i+1];
             forwardingTable[j][OUT] = forwardingTableArray[i+2];
         }
-      
+
+        printForwardingTable();
+    }
+
+    private void printForwardingTable() {
+        System.out.println("Current Forwarding Table: ");
+
+        String format = "%-7s %3s %3s %3s %3s %n";
+        System.out.printf(format, "DEST", "|", "IN", "|", "OUT");
+        System.out.println("-----------------------");
+        for(int i = 0; i < forwardingTable.length; i++) {
+            System.out.printf(format, forwardingTable[i][DEST], "|", forwardingTable[i][IN], "|", forwardingTable[i][OUT]);
+        }
     }
 
     // TODO Get rid of exceptions if getting rid of Thread.sleep()
@@ -83,17 +91,6 @@ public class Router extends Node {
         String nextHop = getNextHop(receivedPacket);
         System.out.println("Next hop for packet is: " + nextHop);
 
-        // Pattern p = Pattern.compile("^\\s*(.*?):(\\d+)\\s*$");
-        // Matcher m = p.matcher(nextHop);
-
-        // String nextHopIP = "";
-
-        // if(m.matches()) {
-        //     nextHopIP = m.group(1);
-        // }
-
-        // InetSocketAddress nextHopAddr = new InetSocketAddress(nextHopIP.substring(1), PORT_NUMBER);
-        // InetSocketAddress nextHopAddr = new InetSocketAddress(E4, PORT_NUMBER);
         InetSocketAddress nextHopAddr = new InetSocketAddress(nextHop, PORT_NUMBER);
         DatagramPacket packet = new DatagramPacket(receivedPacket.getData(), receivedPacket.getLength(), nextHopAddr);
         socket.send(packet);
@@ -102,17 +99,14 @@ public class Router extends Node {
 
     private String getNextHop(DatagramPacket packet) {
         String destination = getDestination(packet);
-        // InetSocketAddress src = (InetSocketAddress) packet.getSocketAddress();
-        // String srcAddress = src.toString();
         String source = packet.getAddress().getHostName();
 
         System.out.println("The final destination of this packet is: " + destination);
-        // System.out.println("Packet came in from: " + srcAddress);
-        System.out.println("Packet came from container: " + source);
 
         // e.g trim "E1.assignment-forwarding_flow-forwarding" to "E1"
         String trimmedSource = source.substring(0,2);
-        
+        System.out.println("Packet came from container: " + trimmedSource);
+
         for(int i = 0; i < forwardingTable.length; i++) {
             if(destination.equals(forwardingTable[i][DEST])) {
                 if(forwardingTable[i][IN].equals(trimmedSource)) {

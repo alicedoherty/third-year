@@ -24,7 +24,6 @@ public class EndNode extends Node {
     public synchronized void sendMessage() throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter the destination you want to send a message to: ");
-        // trinity
         String destination = scanner.nextLine();
 
         System.out.println("Enter the message you want to send to " + destination + ":");
