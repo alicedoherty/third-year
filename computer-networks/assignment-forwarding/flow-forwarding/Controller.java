@@ -37,6 +37,9 @@ public class Controller extends Node {
                     System.out.println("Received hello from router " + source);
                     // System.out.println("Original router: " + original);
                     registerElement(source);
+                    break; 
+                default:
+                System.out.println("Received unexpected packet" + packet.toString());
             }
         }
         catch(Exception e) {e.printStackTrace();}

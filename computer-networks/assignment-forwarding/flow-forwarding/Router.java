@@ -4,20 +4,12 @@ import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 
+import javax.xml.crypto.Data;
+
 public class Router extends Node {
     // Forwarding table layout
     // Dest | In | Out
-    String[][] forwardingTable = {
-        {"test", "E1", "E4"}
-    };
-    // String[][] preconfigInfo = {
-    //     {"trinity", "E1", "R1", "E1", "R2"},
-    //     {"trinity", "E1", "R2", "R1", "R4"},
-    //     {"trinity", "E1", "R4", "R2", "E4"},
-    //     {"home", "E1", "R1", "E1", "R3"},
-    //     {"home", "E1", "R3", "R1", "E4"},
-    //     {"test", "E1", "R1", "E1", "E4"}
-    // };
+    String[][] forwardingTable;
 
     Router() {
         try {
@@ -30,8 +22,18 @@ public class Router extends Node {
 
     public synchronized void onReceipt(DatagramPacket packet) {
         try {
-            //byte[] data = packet.getData();
-            forwardMessage(packet);
+            byte[] data = packet.getData();
+            switch(data[TYPE]) {
+                // TODO Change NETWORK_ID bit?
+                case NETWORK_ID:
+                    forwardMessage(packet);
+                    break;
+                case OFPT_FLOW_MOD:
+                    System.out.println("Received request to update forwarding table");
+                    updateForwardingTable(packet);
+                    break;
+            }
+            
         }
         catch(Exception e) {e.printStackTrace();}
     }
@@ -46,6 +48,32 @@ public class Router extends Node {
         socket.send(packet);
 
         System.out.println("Hello sent to controller");
+    }
+
+    public synchronized void updateForwardingTable(DatagramPacket packet) {
+        System.out.println("Info received from controller:");
+
+        // TODO Put into function?
+        byte[] data = packet.getData();
+        byte[] buffer = new byte[packet.getLength()-1];
+        System.arraycopy(data, 1, buffer, 0, buffer.length);
+        String forwardingTableString = new String(buffer);
+        System.out.println(forwardingTableString);
+
+        // Convert forwardingTableString to a String array
+        String[] forwardingTableArray = forwardingTableString.split(", ");
+        System.out.println(forwardingTableArray.length);
+
+        // Set forwardingTable
+        // TODO add constant for 3?
+        forwardingTable = new String[forwardingTableArray.length/3][3];
+
+        for(int i = 0, j = 0; i < forwardingTableArray.length; i += 3, j++) {
+            forwardingTable[j][DEST] = forwardingTableArray[i];
+            forwardingTable[j][IN] = forwardingTableArray[i+1];
+            forwardingTable[j][OUT] = forwardingTableArray[i+2];
+        }
+      
     }
 
     // TODO Get rid of exceptions if getting rid of Thread.sleep()
