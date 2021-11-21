@@ -104,13 +104,14 @@ public abstract class Node {
 	//
 	// IPv4 Addressses
 	//
-	protected static final String E1 = "/192.168.10.10:51510";
-	protected static final String E4 = "/192.168.10.20:51510";
+	// protected static final String E1 = "/192.168.10.10:51510";
+	// protected static final String E4 = "/192.168.10.20:51510";
+	// // protected static final String E4 = "E4.assignment-forwarding_flow-forwarding";
 
-	protected static final String R1 = "/192.168.10.30:51510";
-	protected static final String R2 = "/192.168.10.40:51510";
-	protected static final String R3 = "/192.168.10.50:51510";
-	protected static final String R4 = "/192.168.10.60:51510";
+	// protected static final String R1 = "/192.168.10.30:51510";
+	// protected static final String R2 = "/192.168.10.40:51510";
+	// protected static final String R3 = "/192.168.10.50:51510";
+	// protected static final String R4 = "/192.168.10.60:51510";
 
 
 	DatagramSocket socket;
