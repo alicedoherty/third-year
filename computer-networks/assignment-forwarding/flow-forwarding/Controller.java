@@ -12,7 +12,7 @@ public class Controller extends Node {
         {"trinity", "E1", "R4", "R2", "E4"},
         {"home", "E1", "R1", "E1", "R3"},
         {"home", "E1", "R3", "R1", "E4"},
-        {"test", "E1", "R1", "E1", "E4"}
+        {"lab", "E1", "R1", "E1", "E4"}
     };
 
     ArrayList<String> routers = new ArrayList<String>();
@@ -74,8 +74,19 @@ public class Controller extends Node {
         sendForwardingTable(container);
     }
 
+    private void printPreconfigInfo() {
+        String format = "%-7s %3s %-3s %3s %-7s %3s %-3s %3s %-3s %n";
+
+        System.out.printf(format, "DEST", "|", "SRC", "|", "ROUTER", "|", "IN", "|", "OUT");
+        for(int i = 0; i < preconfigInfo.length; i++) {
+            System.out.printf(format, preconfigInfo[i][DEST_ADDR], "|", preconfigInfo[i][SRC_ADDR], "|", preconfigInfo[i][ROUTER], "|", preconfigInfo[i][ROUTER_IN], "|", preconfigInfo[i][ROUTER_OUT]);
+        }
+    }
+
     public synchronized void start() throws Exception {
         System.out.println("Controller program starting...");
+        System.out.println("The current view of the network is: ");
+        printPreconfigInfo();
 		while (true) {
 			this.wait();
 		}

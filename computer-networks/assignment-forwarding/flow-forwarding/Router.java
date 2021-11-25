@@ -4,8 +4,6 @@ import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 
-import javax.xml.crypto.Data;
-
 public class Router extends Node {
     // Forwarding table layout
     // Dest | In | Out
