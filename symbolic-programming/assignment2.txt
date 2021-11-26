@@ -18,5 +18,8 @@ pet(s) --> [snail].
 pet(z) --> [zebra].
 
 // Problem 2
+fib --> [0,1], calcFib(0,1).
+calcFib(_,_) --> [].
+calcFib(X1,X2) --> {F is X1+X2}, [F], calcFib(X2,F).
 
 // Problem 3
