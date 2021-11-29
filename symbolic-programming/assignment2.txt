@@ -1,4 +1,4 @@
-// Problem 1
+% Problem 1
 
 nbd([h(C1,N1,P1),h(C2,N2,P2),h(C3,N3,P3)],[]) :- dcgNbd([C1,N1,P1,C2,N2,P2,C3,N3,P3],[]).
 
@@ -17,9 +17,48 @@ pet(j) --> [jaguar].
 pet(s) --> [snail].
 pet(z) --> [zebra].
 
-// Problem 2
+% Problem 2
 fib --> [0,1], calcFib(0,1).
 calcFib(_,_) --> [].
 calcFib(X1,X2) --> {F is X1+X2}, [F], calcFib(X2,F).
 
-// Problem 3
+% Problem 3a
+
+% Code from assignment description
+accept(N,String) :- steps(N,q0,String,Q), final(N,Q).
+steps(_,Q,[],Q).
+steps(N,Q1,[H|T],Q2) :- tran(N,Q1,H,Q), steps(N,Q,T,Q2).
+
+tran(_,q0,1,1).
+tran(N,Q1,0,Q2) :- integer(Q1), Q1 < N, Q2 is Q1+1.
+tran(N,Q1,1,Q2) :- integer(Q1), Q1 < N, Q2 is Q1+1.
+tran(_,q0,0,q0).
+tran(_,q0,1,q0).
+
+final(N,N).
+
+% Problem 3b
+s(N) --> a, [1], b(N).
+
+a --> [].
+a --> [0], a.
+a --> [1], a.
+
+b(1) --> [].
+b(N) --> {N > 1, N2 is N-1}, [0], b(N2).
+b(N) --> {N > 1, N2 is N-1}, [1], b(N2).
+
+c(1) --> [].
+c(N) --> {N > 1, N2 is N-1}, [0], c(N2).
+
+% Necessary??
+% s2(N,Z,A) :- s(N,A,[]), \+ member(A,Z), A\==Z.
+
+% Problem 3c
+s2(N,Z,A) :- s(N,A,[]), \+ member(A,Z), A\==Z.
+
+initial(1,N,Z) :- c(N,A,[]), append([1],A,Z).
+initial(2,N,Z) :- initial(1,N,A), s2(N,A,B), append([A],[B],Z).
+initial(I,N,Z) :- C is I-1, initial(C,N,A), s2(N,A,B), append(A,[B],Z).
+
+ith(I,N,Z) :- initial(I,N,A), B is I-1, nth0(B,A,Z).
