@@ -16,6 +16,28 @@ services:
         ipv4_address: 192.168.10.10
     command: tail -f /dev/null
 
+  E2:
+    container_name: E2
+    image: java
+    restart: "no"
+    volumes:
+      - ./flow-forwarding:/flow-forwarding
+    networks:
+      flow-forwarding:
+        ipv4_address: 192.168.10.20
+    command: tail -f /dev/null
+
+  E3:
+    container_name: E3
+    image: java
+    restart: "no"
+    volumes:
+      - ./flow-forwarding:/flow-forwarding
+    networks:
+      flow-forwarding:
+        ipv4_address: 192.168.10.30
+    command: tail -f /dev/null
+
   E4:
     container_name: E4
     image: java
@@ -24,7 +46,7 @@ services:
       - ./flow-forwarding:/flow-forwarding
     networks:
       flow-forwarding:
-        ipv4_address: 192.168.10.20
+        ipv4_address: 192.168.10.40
     command: tail -f /dev/null
 
 # Routers
@@ -36,7 +58,7 @@ services:
       - ./flow-forwarding:/flow-forwarding
     networks:
       flow-forwarding:
-        ipv4_address: 192.168.10.30
+        ipv4_address: 192.168.10.50
     command: tail -f /dev/null
 
   R2:
@@ -47,7 +69,7 @@ services:
       - ./flow-forwarding:/flow-forwarding
     networks:
       flow-forwarding:
-        ipv4_address: 192.168.10.40
+        ipv4_address: 192.168.10.60
     command: tail -f /dev/null
 
   R3:
@@ -58,7 +80,7 @@ services:
       - ./flow-forwarding:/flow-forwarding
     networks:
       flow-forwarding:
-        ipv4_address: 192.168.10.50
+        ipv4_address: 192.168.10.70
     command: tail -f /dev/null
 
   R4:
@@ -69,7 +91,7 @@ services:
       - ./flow-forwarding:/flow-forwarding
     networks:
       flow-forwarding:
-        ipv4_address: 192.168.10.60
+        ipv4_address: 192.168.10.80
     command: tail -f /dev/null
 
 # Controller
@@ -81,7 +103,7 @@ services:
       - ./flow-forwarding:/flow-forwarding
     networks:
       flow-forwarding:
-        ipv4_address: 192.168.10.70
+        ipv4_address: 192.168.10.90
     command: tail -f /dev/null
 
 # tcpdump is used to capture network traffic in PCAP file

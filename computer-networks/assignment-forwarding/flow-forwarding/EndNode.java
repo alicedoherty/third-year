@@ -40,6 +40,9 @@ public class EndNode extends Node {
         socket.send(packet);
 
         System.out.println("Message "+ message + " sent to " + destination);
+
+        // TODO Check this doesn't break code
+        // scanner.close();
     }
 
     // Set header using type-length-value format

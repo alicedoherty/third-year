@@ -6,17 +6,22 @@ import java.net.SocketException;
 import java.util.ArrayList;
 
 public class Controller extends Node {
+    // Preconfig Info Layout:
+    // {DEST, SRC, ROUTER, IN, OUT}
     String[][] preconfigInfo = {
         {"trinity", "E1", "R1", "E1", "R2"},
         {"trinity", "E1", "R2", "R1", "R4"},
         {"trinity", "E1", "R4", "R2", "E4"},
         {"home", "E1", "R1", "E1", "R3"},
-        {"home", "E1", "R3", "R1", "E4"},
-        {"lab", "E1", "R1", "E1", "E4"}
+        {"home", "E1", "R3", "R1", "E2"},
+        {"lab", "E3", "R1", "E3", "R4"},
+        {"lab", "E3", "R4", "R1", "R3"},
+        {"lab", "E3", "R3", "R4", "E1"}
     };
 
-    ArrayList<String> routers = new ArrayList<String>();
-    ArrayList<String> endNodes = new ArrayList<String>();
+    // TODO necessary?
+    // ArrayList<String> routers = new ArrayList<String>();
+    // ArrayList<String> endNodes = new ArrayList<String>();
 
     Controller() {
         try {
@@ -30,12 +35,18 @@ public class Controller extends Node {
     public synchronized void onReceipt(DatagramPacket packet) {
         try {
             byte[] data = packet.getData();
+            String source = packet.getAddress().getHostName().substring(0,2);
             switch(data[TYPE]) {
                 case OFPT_HELLO:
-                    String source = packet.getAddress().getHostName().substring(0,2);
                     System.out.println("Received hello from router " + source);
                     registerElement(source);
                     break; 
+                case OFPT_PACKET_IN:
+                    System.out.println("Received packet with unknown next hop from " + source);
+                    if(!lookUpDestination(packet)) {
+                        System.out.println("Destination does not exist - packet has been dropped");
+                    }
+                    break;
                 default:
                 System.out.println("Received unexpected packet" + packet.toString());
             }
@@ -64,13 +75,15 @@ public class Controller extends Node {
         InetSocketAddress routerAddr = new InetSocketAddress(router, PORT_NUMBER);
         DatagramPacket packet = new DatagramPacket(data, data.length, routerAddr);
         socket.send(packet);
+
+        System.out.println("Updated forwarding table has been sent to " + router);
     }
 
     // Register network element
     // e.g for routers send them forwarding table info
     public synchronized void registerElement(String container) throws IOException {
         // Add for endNodes too
-        routers.add(container);
+        // routers.add(container);
         sendForwardingTable(container);
     }
 
@@ -81,6 +94,22 @@ public class Controller extends Node {
         for(int i = 0; i < preconfigInfo.length; i++) {
             System.out.printf(format, preconfigInfo[i][DEST_ADDR], "|", preconfigInfo[i][SRC_ADDR], "|", preconfigInfo[i][ROUTER], "|", preconfigInfo[i][ROUTER_IN], "|", preconfigInfo[i][ROUTER_OUT]);
         }
+    }
+
+    private Boolean lookUpDestination(DatagramPacket packet) {
+        System.out.println("Searching for the destination...");
+
+        String destination = getDestination(packet);
+        // String source = packet.getAddress().getHostName().substring(0,2);
+
+        for(int i = 0; i < preconfigInfo.length; i++) {
+            if(destination.equals(preconfigInfo[i][DEST_ADDR])) {
+                System.out.println("Destination found in preconfig table");
+                System.out.println("Updating forwarding tables...");
+                return true;
+            }
+        }
+        return false;
     }
 
     public synchronized void start() throws Exception {

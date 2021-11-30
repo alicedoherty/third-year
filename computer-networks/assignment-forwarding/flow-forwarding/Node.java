@@ -28,6 +28,7 @@ public abstract class Node {
 	protected static final byte OFPT_SET_CONFIG = 9;
 
 	// Asynchronous messages
+
 	protected static final byte OFPT_PACKET_IN = 10;
 	protected static final byte OFPT_FLOW_REMOVED = 11;
 	protected static final byte OFPT_PORT_STATUS = 12;
@@ -81,7 +82,6 @@ public abstract class Node {
     //
 	protected static final int PACKETSIZE = 65000;
     protected static final int PORT_NUMBER = 51510;
-    protected static final String LOCALHOST = "localhost";
 	protected static final int CONTROL_HEADER_LENGTH = 2;
 
     //
@@ -135,6 +135,16 @@ public abstract class Node {
 		String message = new String(buffer);
 		return message;
 	}
+
+	protected String getDestination(DatagramPacket packet) {
+        byte[] data = packet.getData();
+        int dstLength = data[LENGTH];
+
+        byte[] buffer = new byte[dstLength];
+		System.arraycopy(data, CONTROL_HEADER_LENGTH, buffer, 0, buffer.length);
+		String destination = new String(buffer);
+        return destination;
+    }
 
 	/**
 	 *
