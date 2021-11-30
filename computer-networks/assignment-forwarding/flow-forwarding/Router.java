@@ -7,7 +7,9 @@ import java.net.SocketException;
 public class Router extends Node {
     // Forwarding table layout
     // Dest | In | Out
-    String[][] forwardingTable;
+    String[][] forwardingTable = {
+        {"null", "null", "null", "null", "null"}
+    };
 
     Router() {
         try {
@@ -80,6 +82,7 @@ public class Router extends Node {
         for(int i = 0; i < forwardingTable.length; i++) {
             System.out.printf(format, forwardingTable[i][DEST], "|", forwardingTable[i][IN], "|", forwardingTable[i][OUT]);
         }
+        System.out.println("-----------------------");
     }
 
     // TODO Get rid of exceptions if getting rid of Thread.sleep()
@@ -120,16 +123,6 @@ public class Router extends Node {
         return "error";
     }
 
-    // private String getDestination(DatagramPacket packet) {
-    //     byte[] data = packet.getData();
-    //     int dstLength = data[LENGTH];
-
-    //     byte[] buffer = new byte[dstLength];
-	// 	System.arraycopy(data, CONTROL_HEADER_LENGTH, buffer, 0, buffer.length);
-	// 	String destination = new String(buffer);
-    //     return destination;
-    // }
-
     // If the Router does not know where to forward the packet to next,
     // contact the controller to ask if it knows the next hop.
     public synchronized void contactController(DatagramPacket receivedPacket) throws IOException {
@@ -146,6 +139,7 @@ public class Router extends Node {
 
     public synchronized void start() throws Exception {
         System.out.println("Router program starting...");
+        printForwardingTable();
         sendHello();
 		while (true) {
 			this.wait();

@@ -50,6 +50,23 @@ public class EndNode extends Node {
 
     // }
 
+    // If an EndNode is set to "waiting", it can then indicate it wants to receive traffic for a given string.
+    public synchronized void setDestination() throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the string (destination) you want to receive messages for: ");
+        String destination = scanner.nextLine();
+
+        byte[] data = makeDataByteArray(destination);
+        data[TYPE] = SET_DESTINATION;
+        data[LENGTH] = (byte) destination.length();
+
+        InetSocketAddress controllerAddr = new InetSocketAddress("controller", PORT_NUMBER);
+        DatagramPacket packet = new DatagramPacket(data, data.length, controllerAddr);
+        socket.send(packet);
+
+        System.out.println("Request made to controller to receive messages for \"" + destination + "\"");
+    }
+
     private synchronized void start() throws IOException, InterruptedException {
         System.out.println("EndNode program starting...");
 
@@ -67,6 +84,7 @@ public class EndNode extends Node {
                 // finished = true;
             } else if (choice.equalsIgnoreCase("WAIT")) {
                 System.out.println("Waiting for messages...");
+                setDestination();
                 // finished = true;
                 this.wait();
             } else if (choice.equalsIgnoreCase("exit")) {

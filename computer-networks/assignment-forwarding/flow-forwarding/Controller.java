@@ -47,6 +47,8 @@ public class Controller extends Node {
                         System.out.println("Destination does not exist - packet has been dropped");
                     }
                     break;
+                case SET_DESTINATION:
+                    setEndNodeDestination();
                 default:
                 System.out.println("Received unexpected packet" + packet.toString());
             }
@@ -110,6 +112,10 @@ public class Controller extends Node {
             }
         }
         return false;
+    }
+
+    private void setEndNodeDestination() {
+        
     }
 
     public synchronized void start() throws Exception {
