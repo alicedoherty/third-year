@@ -73,9 +73,6 @@ public abstract class Node {
 	// Controller Status async message
 	protected static final byte OFPT_CONTROLLER_STATUS = 35;
 
-	// Custom
-    protected static final byte SET_DESTINATION = 36;
-
     //
     // Other constants
     //
