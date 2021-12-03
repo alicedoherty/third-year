@@ -1,5 +1,4 @@
-// Alice Doherty
-// Student Number: 19333356
+// Author: Alice Doherty
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -7,10 +6,9 @@ import java.net.SocketException;
 import java.util.concurrent.CountDownLatch;
 
 public abstract class Node {
-    // TODO clean up unused constants
-
     //
     // OpenFlow Packet Types
+	// Note: the majority of these aren't used but represent the different possible OpenFlow packets.
     //
 
     // Immutable messages
@@ -28,7 +26,6 @@ public abstract class Node {
 	protected static final byte OFPT_SET_CONFIG = 9;
 
 	// Asynchronous messages
-
 	protected static final byte OFPT_PACKET_IN = 10;
 	protected static final byte OFPT_FLOW_REMOVED = 11;
 	protected static final byte OFPT_PORT_STATUS = 12;

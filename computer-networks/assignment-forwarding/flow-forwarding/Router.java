@@ -1,3 +1,5 @@
+// Author: Alice Doherty
+
 import java.net.DatagramSocket;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -5,10 +7,10 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 
 public class Router extends Node {
-    // Forwarding table layout
-    // Dest | In | Out
+    // Forwarding Table Layout
+    // {DEST, IN, OUT}
     String[][] forwardingTable = {
-        {"null", "null", "null", "null", "null"}
+        {"null", "null", "null"}
     };
 
     Router() {
@@ -24,7 +26,6 @@ public class Router extends Node {
         try {
             byte[] data = packet.getData();
             switch(data[TYPE]) {
-                // TODO Change NETWORK_ID bit?
                 case NETWORK_ID:
                     forwardMessage(packet);
                     break;
@@ -51,7 +52,6 @@ public class Router extends Node {
     }
 
     public synchronized void updateForwardingTable(DatagramPacket packet) {
-        // TODO Put into function?
         byte[] data = packet.getData();
         byte[] buffer = new byte[packet.getLength()-1];
         System.arraycopy(data, 1, buffer, 0, buffer.length);
@@ -61,7 +61,6 @@ public class Router extends Node {
         String[] forwardingTableArray = forwardingTableString.split(", ");
 
         // Set forwardingTable
-        // TODO add constant for 3?
         forwardingTable = new String[forwardingTableArray.length/3][3];
 
         for(int i = 0, j = 0; i < forwardingTableArray.length; i += 3, j++) {
@@ -85,7 +84,6 @@ public class Router extends Node {
         System.out.println("-----------------------");
     }
 
-    // TODO Get rid of exceptions if getting rid of Thread.sleep()
     public synchronized void forwardMessage(DatagramPacket receivedPacket) throws IOException {
         String nextHop = getNextHop(receivedPacket);
 
@@ -105,12 +103,12 @@ public class Router extends Node {
 
     private String getNextHop(DatagramPacket packet) {
         String destination = getDestination(packet);
+
+        // Gets packet's source address (container name) and trims
+        // e.g trims "E1.assignment-forwarding_flow-forwarding" to "E1"
         String source = packet.getAddress().getHostName().substring(0,2);
 
         System.out.println("The final destination of this packet is: " + destination);
-
-        // e.g trim "E1.assignment-forwarding_flow-forwarding" to "E1"
-        // String trimmedSource = source.substring(0,2);
         System.out.println("Packet came from container: " + source);
 
         for(int i = 0; i < forwardingTable.length; i++) {

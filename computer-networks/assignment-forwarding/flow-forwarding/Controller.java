@@ -1,3 +1,5 @@
+// Author: Alice Doherty
+
 import java.net.DatagramSocket;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -18,10 +20,6 @@ public class Controller extends Node {
         {"lab", "E3", "R4", "R1", "R3"},
         {"lab", "E3", "R3", "R4", "E1"}
     };
-
-    // TODO necessary?
-    // ArrayList<String> routers = new ArrayList<String>();
-    // ArrayList<String> endNodes = new ArrayList<String>();
 
     Controller() {
         try {
@@ -47,8 +45,6 @@ public class Controller extends Node {
                         System.out.println("Destination does not exist - packet has been dropped");
                     }
                     break;
-                case SET_DESTINATION:
-                    setEndNodeDestination();
                 default:
                 System.out.println("Received unexpected packet" + packet.toString());
             }
@@ -67,8 +63,7 @@ public class Controller extends Node {
         }
 
         String tableString = String.join(", ", table);
-        
-        // Make into separate function
+
         byte[] buffer = tableString.getBytes();
         byte[] data = new byte[buffer.length+1];
         System.arraycopy(buffer, 0, data, 1, buffer.length);
@@ -81,11 +76,8 @@ public class Controller extends Node {
         System.out.println("Updated forwarding table has been sent to " + router);
     }
 
-    // Register network element
-    // e.g for routers send them forwarding table info
+    // Register network element, i.e send routers forwarding table info
     public synchronized void registerElement(String container) throws IOException {
-        // Add for endNodes too
-        // routers.add(container);
         sendForwardingTable(container);
     }
 
@@ -102,7 +94,6 @@ public class Controller extends Node {
         System.out.println("Searching for the destination...");
 
         String destination = getDestination(packet);
-        // String source = packet.getAddress().getHostName().substring(0,2);
 
         for(int i = 0; i < preconfigInfo.length; i++) {
             if(destination.equals(preconfigInfo[i][DEST_ADDR])) {
@@ -112,10 +103,6 @@ public class Controller extends Node {
             }
         }
         return false;
-    }
-
-    private void setEndNodeDestination() {
-        
     }
 
     public synchronized void start() throws Exception {
