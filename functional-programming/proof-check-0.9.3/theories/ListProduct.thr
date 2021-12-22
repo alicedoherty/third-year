@@ -13,8 +13,21 @@ STRATEGY Induction xs :: List
     BASE []
         product ([]++ys)   ==   product [] * product ys
 
-    STRATEGY ReduceAll
-        product ([]++ys)   ==   product [] * product ys
+    STRATEGY ReduceBoth
+
+    LHS
+
+        product ([]++ys)
+         = DEF ++.1
+        product ys
+
+    RHS
+
+        product [] * product ys
+         = DEF product.1
+        1 * product ys
+         = LAW mul_left_unit l2r
+        product ys
 
     QED BASE
 
@@ -26,9 +39,25 @@ STRATEGY Induction xs :: List
     SHOW
       product ((x:xs)++ys)   ==   product (x:xs) * product ys
 
-    STRATEGY ReduceAll
+    STRATEGY ReduceBoth
 
-        product ((x:xs)++ys)   ==   product (x:xs) * product ys
+    LHS
+
+        product ((x:xs)++ys)
+         = DEF ++.2
+        product (x:(xs++ys))
+         = DEF product.2
+        x * product(xs++ys)
+         = INDHYP l2r @ product
+        x * (product xs * product ys)
+
+    RHS
+
+        product (x:xs) * product ys
+         = DEF product.2
+        (x * product xs) * product ys
+         = LAW mul_assoc r2l
+        x * (product xs * product ys)
 
     QED STEP
 
