@@ -17,7 +17,7 @@ Introduction to Haskell
 Introduction to Prolog
 
 ### CSU33012 Software Engineering
-**Note:** assignments for this module are in there own repos
+**Note:** assignments for this module are in their own repos
 
 See:
 - [Lowest Common Ancestor](https://github.com/alicedoherty/lowest-common-ancestor)
