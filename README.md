@@ -26,3 +26,27 @@ See:
 - [Measuring Software Engineering Report](https://github.com/alicedoherty/measuring-engineering-report)
 
 ## Hilary Term
+
+### [CSU33061 Artificial Intelligence I](ai)
+
+Introduction to AI using Prolog
+
+### [CSU34041 Information Management II](info-management)
+
+Introduction to Databases (with a focus on SQL)
+
+### [CSU33071 Compiler Design I](compiler-design)
+
+Introduction to lexical analysis, parsing, and code generation
+
+ToY Compiler Project can be found [here](https://github.com/alicedoherty/compiler-design)
+
+
+### CSU33013 Software Engineering Project II
+
+Blockchain Publishing System built for Propylon
+
+The repository can be found [here](https://github.com/alicedoherty/SWENG-project-2022)
+
+
+
