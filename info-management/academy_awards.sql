@@ -10,7 +10,7 @@ SET NAMES utf8;
 SET character_set_client = utf8mb4;
 
 CREATE TABLE academy_award_show (
-	ceremony_year YEAR NOT NULL,
+    ceremony_year YEAR NOT NULL,
     venue VARCHAR(255) NOT NULL,
     broadcaster VARCHAR(255) NOT NULL,
     show_host VARCHAR(255),
@@ -18,24 +18,24 @@ CREATE TABLE academy_award_show (
 );
 
 CREATE TABLE performer (
-	performer_id INTEGER NOT NULL AUTO_INCREMENT,
-	performer_name VARCHAR(255) NOT NULL,
-	pay INTEGER NOT NULL,
+    performer_id INTEGER NOT NULL AUTO_INCREMENT,
+    performer_name VARCHAR(255) NOT NULL,
+    pay INTEGER NOT NULL,
     ceremony_year YEAR NOT NULL,
-	PRIMARY KEY (performer_id),
+    PRIMARY KEY (performer_id),
     FOREIGN KEY (ceremony_year) REFERENCES academy_award_show(ceremony_year),
     CHECK (pay > 0)
 );
 
 CREATE TABLE song (
-	performer_id INTEGER NOT NULL,
+    performer_id INTEGER NOT NULL,
     song_name VARCHAR(255) NOT NULL,
     PRIMARY KEY (performer_id, song_name),
     FOREIGN KEY (performer_id) REFERENCES performer(performer_id)
 );
 
 CREATE TABLE presenter (
-	presenter_id INTEGER NOT NULL AUTO_INCREMENT,
+    presenter_id INTEGER NOT NULL AUTO_INCREMENT,
     presenter_name VARCHAR(255) NOT NULL,
     pay INTEGER NOT NULL,
     award_category VARCHAR(255) NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE presenter (
 );
 
 CREATE TABLE voter (
-	voter_id INTEGER NOT NULL AUTO_INCREMENT,
+    voter_id INTEGER NOT NULL AUTO_INCREMENT,
     voter_name VARCHAR(255) NOT NULL,
     discipline VARCHAR(255) NOT NULL,
     gender VARCHAR(255),
@@ -57,14 +57,14 @@ CREATE TABLE voter (
 );
 
 CREATE TABLE nominee (
-	nominee_id INTEGER NOT NULL AUTO_INCREMENT,
+    nominee_id INTEGER NOT NULL AUTO_INCREMENT,
     nominee_name VARCHAR(255) NOT NULL,
     profession VARCHAR(255),
     PRIMARY KEY (nominee_id)
 );
 
 CREATE TABLE vote (
-	voter_id INTEGER NOT NULL,
+    voter_id INTEGER NOT NULL,
     nominee_id INTEGER NOT NULL,
     category VARCHAR(255) NOT NULL,
     PRIMARY KEY (voter_id, nominee_id, category),
@@ -73,7 +73,7 @@ CREATE TABLE vote (
 );
 
 CREATE TABLE film (
-	film_id INTEGER NOT NULL AUTO_INCREMENT,
+    film_id INTEGER NOT NULL AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     release_year YEAR,
     director VARCHAR(255),
@@ -81,7 +81,7 @@ CREATE TABLE film (
 );
 
 CREATE TABLE genre (
-	film_id INTEGER NOT NULL,
+    film_id INTEGER NOT NULL,
     genre VARCHAR(255) NOT NULL,
     PRIMARY KEY (film_id, genre),
     FOREIGN KEY (film_id) REFERENCES film(film_id)
@@ -98,8 +98,8 @@ CREATE TABLE nomination (
         REFERENCES nominee(nominee_id),
     FOREIGN KEY (film_id)
         REFERENCES film(film_id),
-	FOREIGN KEY (nomination_year) 
-		REFERENCES academy_award_show(ceremony_year)
+    FOREIGN KEY (nomination_year) 
+        REFERENCES academy_award_show(ceremony_year)
 );
 
 /*
@@ -131,27 +131,27 @@ DELIMITER $$
 
 CREATE TRIGGER category_check
 BEFORE INSERT
-	ON nomination FOR EACH ROW
-	BEGIN
-		IF EXISTS (SELECT * FROM nomination WHERE (nominee_id = NEW.nominee_id) 
-			AND (category = NEW.category) 
+    ON nomination FOR EACH ROW
+    BEGIN
+        IF EXISTS (SELECT * FROM nomination WHERE (nominee_id = NEW.nominee_id) 
+            AND (category = NEW.category) 
             AND (nomination_year = NEW.nomination_year)) THEN
-			SIGNAL SQLSTATE '45000'
-				SET MESSAGE_TEXT = 'The same nominee cannot be nominated more than once in the same category.';
-		END IF;
-	END $$
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'The same nominee cannot be nominated more than once in the same category.';
+        END IF;
+    END $$
     
 -- An actor can't be nominated more than once (across different categories) for the SAME performance
 -- e.g an actor can't be nominated for Best Actor and Best Supporting Actor for their performance in Film X
 CREATE TRIGGER film_check
 BEFORE INSERT
-	ON nomination FOR EACH ROW
-	BEGIN
-		IF EXISTS (SELECT * FROM nomination WHERE (nominee_id = NEW.nominee_id) AND (film_id = NEW.film_id)) THEN
-			SIGNAL SQLSTATE '45000'
-				SET MESSAGE_TEXT = 'The same nominee cannot be nominated more than once (across different categories) for the same performance/film.';
-		END IF;
-	END $$
+    ON nomination FOR EACH ROW
+    BEGIN
+        IF EXISTS (SELECT * FROM nomination WHERE (nominee_id = NEW.nominee_id) AND (film_id = NEW.film_id)) THEN
+            SIGNAL SQLSTATE '45000'
+                SET MESSAGE_TEXT = 'The same nominee cannot be nominated more than once (across different categories) for the same performance/film.';
+        END IF;
+    END $$
 
 DELIMITER ;
 
@@ -164,7 +164,7 @@ CREATE VIEW best_actor_nominees (nominee, film, winner) AS
 SELECT nominee.nominee_name, film.title, nomination.winner
 FROM nominee, film, nomination
 WHERE (nominee.nominee_id = nomination.nominee_id)
-	AND (film.film_id = nomination.film_id)
+    AND (film.film_id = nomination.film_id)
     AND (nomination.category = "Best Actor")
     AND (nomination.nomination_year = "2021");
 
@@ -173,7 +173,7 @@ CREATE VIEW best_actress_nominees (nominee, film, winner) AS
 SELECT nominee.nominee_name, film.title, nomination.winner
 FROM nominee, film, nomination
 WHERE (nominee.nominee_id = nomination.nominee_id)
-	AND (film.film_id = nomination.film_id)
+    AND (film.film_id = nomination.film_id)
     AND (nomination.category = "Best Actress")
     AND (nomination.nomination_year = "2021");
 
@@ -182,7 +182,7 @@ CREATE VIEW best_director_nominees (nominee, film, winner) AS
 SELECT nominee.nominee_name, film.title, nomination.winner
 FROM nominee, film, nomination
 WHERE (nominee.nominee_id = nomination.nominee_id)
-	AND (film.film_id = nomination.film_id)
+    AND (film.film_id = nomination.film_id)
     AND (nomination.category = "Best Director")
     AND (nomination.nomination_year = "2021");
     
@@ -204,8 +204,8 @@ WHERE (presenter.ceremony_year = "2022");
 
 INSERT INTO academy_award_show (ceremony_year, venue, broadcaster, show_host)
 VALUES 
-	(2022, "Dolby Theatre", "ABC", "Amy Schumer"),
-	(2021, "Union Station", "ABC", null),
+    (2022, "Dolby Theatre", "ABC", "Amy Schumer"),
+    (2021, "Union Station", "ABC", null),
     (2020, "Dolby Theatre", "ABC", null),
     (2019, "Dolby Theatre", "ABC", null),
     (2018, "Dolby Theatre", "ABC", "Jimmy Kimmel"),
@@ -215,9 +215,9 @@ VALUES
 -- Note: No values for performer_id are inserted because it is an auto-increment field
 INSERT INTO performer (performer_name, pay, ceremony_year)
 VALUES
-	("Taylor Swift", "11111", 2022),
+    ("Taylor Swift", "11111", 2022),
     ("Billie Eilish", "10000", 2022),
-	("Beyonce", "12345", 2021),
+    ("Beyonce", "12345", 2021),
     ("Harry Styles", "10000", 2021),
     ("Elton John", "23000", 2020),
     ("Eminem", "12900", 2020),
@@ -228,10 +228,10 @@ VALUES
     
 INSERT INTO song (performer_id, song_name)
 VALUES
-	(1, "All Too Well (10 Minute Version)"),
+    (1, "All Too Well (10 Minute Version)"),
     (1, "Wildest Dreams"),
     (2, "Happier Than Ever"),
-	(3, "Halo"),
+    (3, "Halo"),
     (4, "Golden"),
     (5, "Your Song"),
     (6, "Lose Yourself"),
@@ -243,11 +243,11 @@ VALUES
 -- Note: No values for presenter_id are inserted because it is an auto-increment field
 INSERT INTO presenter (presenter_name, pay, award_category, ceremony_year)
 VALUES
-	("Matt Damon", 10000, "Best Actor", 2022),
+    ("Matt Damon", 10000, "Best Actor", 2022),
     ("Jessica Laing", 14000, "Best Actress", 2022),
-	("Angela Bassett", "12000", "Best Director", 2022),
+    ("Angela Bassett", "12000", "Best Director", 2022),
     ("Zendaya", "12345", "Best Director", 2022),
-	("Reese Witherspoon", "12200", "Best Actor", 2021),
+    ("Reese Witherspoon", "12200", "Best Actor", 2021),
     ("Brad Pitt", "28900", "Best Actress", 2021),
     ("Joaquin Phoenix", "13000", "Best Director", 2021),
     ("Harrison Ford", "13400", "Best Director", 2021);
@@ -255,7 +255,7 @@ VALUES
 -- Note: No values for voter_id are inserted because it is an auto-increment field
 INSERT INTO voter (voter_name, discipline, gender, race, ceremony_year)
 VALUES
-	("Lisa Prieto", "Production", "Female", "White", 2022),
+    ("Lisa Prieto", "Production", "Female", "White", 2022),
     ("William Mechanic", "Production", "Male", "Black", 2022),
     ("Dan Peters", "Production", "Male", "Asian", 2022),
     ("Nathan Smith", "Acting", "Male", "White", 2022),
@@ -268,7 +268,7 @@ VALUES
 -- Note: No values for nominee_id are inserted because it is an auto-increment field
 INSERT INTO nominee (nominee_name, profession)
 VALUES
-	("Javier Bardem", "Actor"),
+    ("Javier Bardem", "Actor"),
     ("Benedict Cumberbatch", "Actor"),
     ("Andrew Garfield", "Actor"),
     ("Olivia Colman", "Actor"),
@@ -289,8 +289,8 @@ VALUES
     
 INSERT INTO vote (voter_id, nominee_id, category)
 VALUES
-	-- Votes for 2022
-	(1, 1, "Best Actor"),
+    -- Votes for 2022
+    (1, 1, "Best Actor"),
     (1, 4, "Best Actress"),
     (1, 7, "Best Director"),
     (2, 2, "Best Actor"),
@@ -313,12 +313,12 @@ VALUES
     
 INSERT INTO film (title, release_year, director)
 VALUES
-	("Being the Ricardos", 2021, "Aaron Sorkin"),
+    ("Being the Ricardos", 2021, "Aaron Sorkin"),
     ("The Power of the Dog", 2021, "Jane Campion"),
     ("tick, tick… BOOM!", 2021, "Lin-Manuel Miranda"),
     ("The Lost Daughter", 2021, "Maggie Gyllenhaal"),
     ("Spencer", 2021, "Pablo Larrain"),
-	("West Side Story", 2021, "Steven Spielberg"),
+    ("West Side Story", 2021, "Steven Spielberg"),
     ("Belfast", 2021, "Kenneth Branagh"),
     
     ("The Father", 2020, "Fiorian Zeller"),
@@ -329,13 +329,13 @@ VALUES
     
 INSERT INTO genre (film_id, genre)
 VALUES
-	(1, "Biographical"),
+    (1, "Biographical"),
     (1, "Drama"),
     (2, "Western"),
     (3, "Musical"),
     (4, "Thriller"),
     (5, "Biographical"),
-	(6, "Musical"),
+    (6, "Musical"),
     (6, "Romance"),
     (7, "Historical"),
     (8, "Drama"),
@@ -346,7 +346,7 @@ VALUES
 
 INSERT INTO nomination (nominee_id, film_id, category, nomination_year, winner)
 VALUES
-	(1, 1, "Best Actor", 2022, null),
+    (1, 1, "Best Actor", 2022, null),
     (2, 2, "Best Actor", 2022, null),
     (3, 3, "Best Actor", 2022, null),
     (4, 4, "Best Actress", 2022, null),
@@ -354,7 +354,7 @@ VALUES
     (6, 5, "Best Actress", 2022, null),
     (7, 6, "Best Director", 2022, null),
     (8, 2, "Best Director", 2022, null),
-	(9, 7, "Best Director", 2022, null),
+    (9, 7, "Best Director", 2022, null),
     
     (10, 8, "Best Actor", 2021, 1),
     (11, 9, "Best Actor", 2021, 0),
@@ -365,7 +365,7 @@ VALUES
     (4, 8, "Best Supporting Actress", 2021, 0),
     (16, 11, "Best Director", 2021, 0),
     (17, 12, "Best Director", 2021, 1),
-	(18, 9, "Best Director", 2021, 0);
+    (18, 9, "Best Director", 2021, 0);
 
 /*
 	Code for retrieving information (including joins and functions)
@@ -376,35 +376,35 @@ VALUES
 SELECT nomination.nomination_year, nomination.category, nominee.nominee_name, film.title, nomination.winner 
 FROM nomination
 INNER JOIN film 
-	ON nomination.film_id = film.film_id
+    ON nomination.film_id = film.film_id
 INNER JOIN nominee 
-	ON nomination.nominee_id = nominee.nominee_id;
+    ON nomination.nominee_id = nominee.nominee_id;
  
 -- Retrieves all the nominations in the format for a specific year
 SELECT nomination.category, nominee.nominee_name, film.title, nomination.winner 
 FROM nomination
 INNER JOIN film 
-	ON nomination.film_id = film.film_id
+    ON nomination.film_id = film.film_id
 INNER JOIN nominee 
-	ON nomination.nominee_id = nominee.nominee_id
+    ON nomination.nominee_id = nominee.nominee_id
 WHERE nomination.nomination_year = "2021";
     
 -- All nominations for a particular actor
 SELECT nomination.nomination_year, nomination.category, film.title, nomination.winner 
 FROM nomination
 INNER JOIN film 
-	ON nomination.film_id = film.film_id
+    ON nomination.film_id = film.film_id
 INNER JOIN nominee 
-	ON nomination.nominee_id = nominee.nominee_id
+    ON nomination.nominee_id = nominee.nominee_id
 WHERE nominee.nominee_name = "Olivia Colman";
 
 -- All nominations for a particular film
 SELECT nomination.category, nominee.nominee_name
 FROM nomination
 INNER JOIN film 
-	ON nomination.film_id = film.film_id
+    ON nomination.film_id = film.film_id
 INNER JOIN nominee 
-	ON nomination.nominee_id = nominee.nominee_id
+    ON nomination.nominee_id = nominee.nominee_id
 WHERE film.title="Ma Rainey's Black Bottom";
 
 -- Number of nominations for each genre of film, sorted from most number of nominations to least
@@ -415,15 +415,15 @@ ORDER BY count DESC;
 
 -- Breakdown of voters by gender
 SELECT voter.discipline,
-	SUM(CASE WHEN voter.gender = "Male" THEN 1 ELSE 0 END)/COUNT(*)*100 male_percentage, 
-	SUM(CASE WHEN voter.gender = "Female" THEN 1 ELSE 0 END)/COUNT(*)*100 female_percentage
+    SUM(CASE WHEN voter.gender = "Male" THEN 1 ELSE 0 END)/COUNT(*)*100 male_percentage, 
+    SUM(CASE WHEN voter.gender = "Female" THEN 1 ELSE 0 END)/COUNT(*)*100 female_percentage
 FROM voter
 GROUP BY voter.discipline;
 
 -- Breakdown of voters by race
 SELECT voter.discipline,
-	SUM(CASE WHEN voter.race = "White" THEN 1 ELSE 0 END)/COUNT(*)*100 white, 
-	SUM(CASE WHEN voter.race = "Black" THEN 1 ELSE 0 END)/COUNT(*)*100 black,
+    SUM(CASE WHEN voter.race = "White" THEN 1 ELSE 0 END)/COUNT(*)*100 white, 
+    SUM(CASE WHEN voter.race = "Black" THEN 1 ELSE 0 END)/COUNT(*)*100 black,
     SUM(CASE WHEN voter.race = "Asian" THEN 1 ELSE 0 END)/COUNT(*)*100 asian
 FROM voter
 GROUP BY voter.discipline;
