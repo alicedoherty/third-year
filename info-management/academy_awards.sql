@@ -6,8 +6,8 @@ DROP DATABASE IF EXISTS academy_awards;
 CREATE DATABASE academy_awards;
 USE academy_awards;
 
-SET NAMES utf8;
-SET character_set_client = utf8mb4;
+SET NAMES UTF8MB4;
+SET character_set_client = UTF8MB4;
 
 CREATE TABLE academy_award_show (
     ceremony_year YEAR NOT NULL,
@@ -126,7 +126,7 @@ DROP COLUMN producer;
 */
 
 -- An actor can't be nominated more than once in the SAME category
--- e.g actor can't be nominated twice for Best Actor for Film X and Film Y
+-- e.g actor can't be nominated twice for Best Actor for Film X and Film Y in the same year
 DELIMITER $$
 
 CREATE TRIGGER category_check
@@ -137,7 +137,7 @@ BEFORE INSERT
             AND (category = NEW.category) 
             AND (nomination_year = NEW.nomination_year)) THEN
             SIGNAL SQLSTATE '45000'
-                SET MESSAGE_TEXT = 'The same nominee cannot be nominated more than once in the same category.';
+                SET MESSAGE_TEXT = 'The same nominee cannot be nominated more than once in the same category (in the same year).';
         END IF;
     END $$
     
@@ -159,7 +159,7 @@ DELIMITER ;
 	Code for creation of views
 */
 
--- Displays all nominees, and corresponding film, for Best Actor 2021
+-- Displays all nominees, and corresponding film, for Best Actor 2021 and whether they won or not
 CREATE VIEW best_actor_nominees_2021 (nominee, film, winner) AS
 SELECT nominee.nominee_name, film.title, nomination.winner
 FROM nominee, film, nomination
@@ -168,7 +168,7 @@ WHERE (nominee.nominee_id = nomination.nominee_id)
     AND (nomination.category = "Best Actor")
     AND (nomination.nomination_year = "2021");
 
--- Displays all nominees, and corresponding film, for Best Actress 2021
+-- Displays all nominees, and corresponding film, for Best Actress 2021 and whether they won or not
 CREATE VIEW best_actress_nominees_2021 (nominee, film, winner) AS
 SELECT nominee.nominee_name, film.title, nomination.winner
 FROM nominee, film, nomination
@@ -177,7 +177,7 @@ WHERE (nominee.nominee_id = nomination.nominee_id)
     AND (nomination.category = "Best Actress")
     AND (nomination.nomination_year = "2021");
 
--- Displays all nominees, and corresponding film, for Best Director 2021
+-- Displays all nominees, and corresponding film, for Best Director 2021 and whether they won or not
 CREATE VIEW best_director_nominees_2021 (nominee, film, winner) AS
 SELECT nominee.nominee_name, film.title, nomination.winner
 FROM nominee, film, nomination
@@ -371,16 +371,16 @@ VALUES
 	Code for retrieving information (including joins and functions)
 */
 
--- Retrieves all the nominations in the format: (NomineeName, FilmTitle, Category, Year)
+-- Retrieves all the nominations, sorted by year and by category
 SELECT nomination.nomination_year, nomination.category, nominee.nominee_name, film.title, nomination.winner 
 FROM nomination
 INNER JOIN film 
     ON nomination.film_id = film.film_id
 INNER JOIN nominee 
     ON nomination.nominee_id = nominee.nominee_id
-ORDER BY nomination.nomination_year DESC;
+ORDER BY nomination.nomination_year DESC, nomination.category;
 
--- Retrieves all the nominations in the format for a specific year
+-- Retrieves all the nominations for a specific year (2021), sorted by category
 SELECT nomination.category, nominee.nominee_name, film.title, nomination.winner 
 FROM nomination
 INNER JOIN film 
@@ -390,7 +390,7 @@ INNER JOIN nominee
 WHERE nomination.nomination_year = "2021"
 ORDER BY nomination.category;
     
--- All nominations for a particular actor
+-- All nominations for a particular actor, sorted by year
 SELECT nomination.nomination_year, nomination.category, film.title, nomination.winner 
 FROM nomination
 INNER JOIN film 
