@@ -93,7 +93,7 @@ CREATE TABLE nomination (
     category VARCHAR(255) NOT NULL,
     nomination_year YEAR NOT NULL,
     winner BOOL,
-    PRIMARY KEY (nominee_id , film_id , category),
+    PRIMARY KEY (nominee_id , film_id),
     FOREIGN KEY (nominee_id)
         REFERENCES nominee(nominee_id),
     FOREIGN KEY (film_id)
@@ -108,10 +108,10 @@ CREATE TABLE nomination (
 
 -- Add more constraints to the salaries (i.e an upper bound)
 ALTER TABLE performer
-ADD CONSTRAINT performer_pay_check CHECK (pay > 0 AND pay < 1000000);
+ADD CHECK (pay < 1000000);
 
 ALTER TABLE presenter
-ADD CONSTRAINT presenter_pay_check CHECK (pay > 0 AND pay < 1000000);
+ADD CHECK (pay < 1000000);
 
 -- e.g If you decide you also want to store the producer of the film
 ALTER TABLE film
@@ -160,7 +160,7 @@ DELIMITER ;
 */
 
 -- Displays all nominees, and corresponding film, for Best Actor 2021
-CREATE VIEW best_actor_nominees (nominee, film, winner) AS
+CREATE VIEW best_actor_nominees_2021 (nominee, film, winner) AS
 SELECT nominee.nominee_name, film.title, nomination.winner
 FROM nominee, film, nomination
 WHERE (nominee.nominee_id = nomination.nominee_id)
@@ -169,7 +169,7 @@ WHERE (nominee.nominee_id = nomination.nominee_id)
     AND (nomination.nomination_year = "2021");
 
 -- Displays all nominees, and corresponding film, for Best Actress 2021
-CREATE VIEW best_actress_nominees (nominee, film, winner) AS
+CREATE VIEW best_actress_nominees_2021 (nominee, film, winner) AS
 SELECT nominee.nominee_name, film.title, nomination.winner
 FROM nominee, film, nomination
 WHERE (nominee.nominee_id = nomination.nominee_id)
@@ -178,7 +178,7 @@ WHERE (nominee.nominee_id = nomination.nominee_id)
     AND (nomination.nomination_year = "2021");
 
 -- Displays all nominees, and corresponding film, for Best Director 2021
-CREATE VIEW best_director_nominees (nominee, film, winner) AS
+CREATE VIEW best_director_nominees_2021 (nominee, film, winner) AS
 SELECT nominee.nominee_name, film.title, nomination.winner
 FROM nominee, film, nomination
 WHERE (nominee.nominee_id = nomination.nominee_id)
@@ -187,13 +187,13 @@ WHERE (nominee.nominee_id = nomination.nominee_id)
     AND (nomination.nomination_year = "2021");
     
 -- Displays how much each performer is being paid for this year's Oscars (i.e the payroll)
-CREATE VIEW performer_payroll (id, pay_amount) AS
+CREATE VIEW performer_payroll_2022 (id, pay_amount) AS
 SELECT performer.performer_id, performer.pay
 FROM performer
 WHERE (performer.ceremony_year = "2022");
 
 -- Displays how much each presenter is being paid or this year's Oscars (i.e the payroll)
-CREATE VIEW presenter_payroll (id, pay_amount) AS
+CREATE VIEW presenter_payroll_2022 (id, pay_amount) AS
 SELECT presenter.presenter_id, presenter.pay
 FROM presenter
 WHERE (presenter.ceremony_year = "2022");
@@ -215,16 +215,16 @@ VALUES
 -- Note: No values for performer_id are inserted because it is an auto-increment field
 INSERT INTO performer (performer_name, pay, ceremony_year)
 VALUES
-    ("Taylor Swift", "11111", 2022),
-    ("Billie Eilish", "10000", 2022),
-    ("Beyonce", "12345", 2021),
-    ("Harry Styles", "10000", 2021),
-    ("Elton John", "23000", 2020),
-    ("Eminem", "12900", 2020),
-    ("Lady Gaga", "23000", 2019),
-    ("Bradley Cooper", "23000", 2019),
-    ("Sufjan Stevens", "12700", 2018),
-    ("Van Morrison", "15700", 2018);
+    ("Taylor Swift", 11111, 2022),
+    ("Billie Eilish", 10000, 2022),
+    ("Beyonce", 12345, 2021),
+    ("Harry Styles", 10000, 2021),
+    ("Elton John", 23000, 2020),
+    ("Eminem", 12900, 2020),
+    ("Lady Gaga", 23000, 2019),
+    ("Bradley Cooper", 23000, 2019),
+    ("Sufjan Stevens", 12700, 2018),
+    ("Van Morrison", 15700, 2018);
     
 INSERT INTO song (performer_id, song_name)
 VALUES
@@ -245,12 +245,12 @@ INSERT INTO presenter (presenter_name, pay, award_category, ceremony_year)
 VALUES
     ("Matt Damon", 10000, "Best Actor", 2022),
     ("Jessica Laing", 14000, "Best Actress", 2022),
-    ("Angela Bassett", "12000", "Best Director", 2022),
-    ("Zendaya", "12345", "Best Director", 2022),
-    ("Reese Witherspoon", "12200", "Best Actor", 2021),
-    ("Brad Pitt", "28900", "Best Actress", 2021),
-    ("Joaquin Phoenix", "13000", "Best Director", 2021),
-    ("Harrison Ford", "13400", "Best Director", 2021);
+    ("Angela Bassett", 12000, "Best Director", 2022),
+    ("Zendaya", 12345, "Best Director", 2022),
+    ("Reese Witherspoon", 12200, "Best Actor", 2021),
+    ("Brad Pitt", 28900, "Best Actress", 2021),
+    ("Joaquin Phoenix", 13000, "Best Director", 2021),
+    ("Harrison Ford", 13400, "Best Director", 2021);
     
 -- Note: No values for voter_id are inserted because it is an auto-increment field
 INSERT INTO voter (voter_name, discipline, gender, race, ceremony_year)
@@ -359,8 +359,8 @@ VALUES
     (10, 8, "Best Actor", 2021, 1),
     (11, 9, "Best Actor", 2021, 0),
     (12, 10, "Best Actor", 2021, 0),
-    (13, 11, "Best Actress", 2021, 0),
-    (14, 10, "Best Actress", 2021, 1),
+    (13, 11, "Best Actress", 2021, 1),
+    (14, 10, "Best Actress", 2021, 0),
     (15, 12, "Best Actress", 2021, 0),
     (4, 8, "Best Supporting Actress", 2021, 0),
     (16, 11, "Best Director", 2021, 0),
@@ -372,14 +372,14 @@ VALUES
 */
 
 -- Retrieves all the nominations in the format: (NomineeName, FilmTitle, Category, Year)
--- See report for sample output
 SELECT nomination.nomination_year, nomination.category, nominee.nominee_name, film.title, nomination.winner 
 FROM nomination
 INNER JOIN film 
     ON nomination.film_id = film.film_id
 INNER JOIN nominee 
-    ON nomination.nominee_id = nominee.nominee_id;
- 
+    ON nomination.nominee_id = nominee.nominee_id
+ORDER BY nomination.nomination_year DESC;
+
 -- Retrieves all the nominations in the format for a specific year
 SELECT nomination.category, nominee.nominee_name, film.title, nomination.winner 
 FROM nomination
@@ -387,7 +387,8 @@ INNER JOIN film
     ON nomination.film_id = film.film_id
 INNER JOIN nominee 
     ON nomination.nominee_id = nominee.nominee_id
-WHERE nomination.nomination_year = "2021";
+WHERE nomination.nomination_year = "2021"
+ORDER BY nomination.category;
     
 -- All nominations for a particular actor
 SELECT nomination.nomination_year, nomination.category, film.title, nomination.winner 
@@ -396,10 +397,11 @@ INNER JOIN film
     ON nomination.film_id = film.film_id
 INNER JOIN nominee 
     ON nomination.nominee_id = nominee.nominee_id
-WHERE nominee.nominee_name = "Olivia Colman";
+WHERE nominee.nominee_name = "Olivia Colman"
+ORDER BY nomination.nomination_year DESC;
 
 -- All nominations for a particular film
-SELECT nomination.category, nominee.nominee_name
+SELECT nomination.category, nominee.nominee_name, nomination.winner
 FROM nomination
 INNER JOIN film 
     ON nomination.film_id = film.film_id
@@ -447,15 +449,15 @@ GRANT SELECT ON nomination TO 'public';
 GRANT SELECT ON nominee TO 'public';
 
 -- Create sample users
-DROP ROLE IF EXISTS 'jdoe'@'localhost', 'adoherty'@'localhost', 'mconnor'@'localhost', 'dsmith'@'localhost';
+DROP ROLE IF EXISTS 'jdoe'@'localhost', 'mconnor'@'localhost', 'adoherty'@'localhost', 'dsmith'@'localhost';
 CREATE USER 'jdoe'@'localhost' IDENTIFIED BY 'password123';
-CREATE USER 'adoherty'@'localhost' IDENTIFIED BY 'my_password';
 CREATE USER 'mconnor'@'localhost' IDENTIFIED BY 'Password!';
+CREATE USER 'adoherty'@'localhost' IDENTIFIED BY 'my_password';
 CREATE USER 'dsmith'@'localhost' IDENTIFIED BY 'pASSWORD';
 
 -- Assign users roles/privileges
 GRANT 'awards_admin' TO 'jdoe'@'localhost';
-GRANT 'awards_read' TO 'adoherty'@'localhost';
 GRANT 'awards_read', 'awards_write' TO 'mconnor'@'localhost';
+GRANT 'awards_read' TO 'adoherty'@'localhost';
 GRANT 'public' TO 'dsmith'@'localhost';
 
