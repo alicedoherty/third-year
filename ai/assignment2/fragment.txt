@@ -1,0 +1,146 @@
+$ python3 s25.py 
+Learning rate for episode 0 is: 0.5
+Epsilon for episode 0 is: 0.5
+State before action: row,column =1,1
+Add a new state S1  into the Q table
+ action chosen: d
+Add a new state S2  into the Q table
+State before action: row,column =2,1
+ action chosen: r
+Add a new state S3  into the Q table
+State before action: row,column =2,2
+ action chosen: l
+State before action: row,column =2,1
+ action chosen: r
+State before action: row,column =2,2
+ action chosen: d
+Add a new state S4  into the Q table
+State before action: row,column =3,2
+ action chosen: d
+Add a new state S5  into the Q table
+State before action: row,column =4,2
+ action chosen: l
+Add a new state S6  into the Q table
+State before action: row,column =4,1
+ action chosen: r
+State before action: row,column =4,2
+ action chosen: u
+State before action: row,column =3,2
+ action chosen: u
+State before action: row,column =2,2
+ action chosen: r
+Add a new state S7  into the Q table
+State before action: row,column =2,3
+ action chosen: r
+Add a new state S8  into the Q table
+Episode 0 finished. Our agent (T_T) fell into a black hole and used 12 steps
+=======================================================
+Learning rate for episode 1 is: 0.45
+Epsilon for episode 1 is: 0.45
+State before action: row,column =1,1
+ action chosen: u
+State before action: row,column =1,1
+ action chosen: u
+State before action: row,column =1,1
+ action chosen: l
+State before action: row,column =1,1
+ action chosen: d
+State before action: row,column =2,1
+ action chosen: u
+State before action: row,column =1,1
+ action chosen: l
+State before action: row,column =1,1
+ action chosen: u
+State before action: row,column =1,1
+ action chosen: l
+State before action: row,column =1,1
+ action chosen: r
+Add a new state S9  into the Q table
+State before action: row,column =1,2
+ action chosen: l
+State before action: row,column =1,1
+ action chosen: d
+State before action: row,column =2,1
+ action chosen: l
+State before action: row,column =2,1
+ action chosen: r
+State before action: row,column =2,2
+ action chosen: r
+State before action: row,column =2,3
+ action chosen: u
+Add a new state S10  into the Q table
+State before action: row,column =1,3
+ action chosen: r
+Randomized action
+State before action: row,column =2,3
+ action chosen: d
+Randomized action
+State before action: row,column =2,2
+ action chosen: d
+State before action: row,column =3,2
+ action chosen: r
+Episode 1 finished. Our agent (T_T) fell into a black hole and used 19 steps
+=======================================================
+Learning rate for episode 2 is: 0.405
+Epsilon for episode 2 is: 0.405
+State before action: row,column =1,1
+
+...
+
+State before action: row,column =4,3
+ action chosen: r
+State before action: row,column =4,4
+ action chosen: u
+Episode 23 finished. Our agent (>_<) won! and used 12 steps
+=======================================================
+Learning rate for episode 24 is: 0.039883221538436285
+Epsilon for episode 24 is: 0.039883221538436285
+State before action: row,column =1,1
+ action chosen: l
+Randomized action
+State before action: row,column =1,1
+ action chosen: u
+State before action: row,column =1,1
+ action chosen: r
+State before action: row,column =1,2
+ action chosen: d
+State before action: row,column =2,2
+ action chosen: d
+State before action: row,column =3,2
+ action chosen: d
+State before action: row,column =4,2
+ action chosen: r
+State before action: row,column =4,3
+ action chosen: r
+State before action: row,column =4,4
+ action chosen: u
+Episode 24 finished. Our agent (>_<) won! and used 9 steps
+=======================================================
+Training Over
+Q table:
+                        u             d         l             r
+row,column =1,1  0.000000  0.000000e+00  0.000000  7.369861e-10
+row,column =2,1  0.000000  0.000000e+00  0.000000  0.000000e+00
+row,column =2,2  0.000000  6.258640e-06  0.000000 -2.672666e-02
+row,column =3,2  0.000000  2.071550e-04  0.000000 -6.504750e-01
+row,column =4,2  0.000000  0.000000e+00  0.000000  4.095000e-03
+row,column =4,1  0.000000  0.000000e+00  0.000000  1.228919e-05
+row,column =2,3 -0.156905 -4.050000e-01 -0.090305 -6.107802e-01
+terminal         0.000000  0.000000e+00  0.000000  0.000000e+00
+row,column =1,2  0.000000  1.042197e-07  0.000000  0.000000e+00
+row,column =1,3  0.000000 -1.615270e-02  0.000000  0.000000e+00
+row,column =3,1  0.000000  0.000000e+00  0.000000  0.000000e+00
+row,column =5,2  0.000000  0.000000e+00  0.000000  0.000000e+00
+row,column =5,1  0.000000  0.000000e+00  0.000000  0.000000e+00
+row,column =1,4  0.000000 -5.066009e-01  0.000000  0.000000e+00
+row,column =5,3  0.000000  0.000000e+00  0.000000  0.000000e+00
+row,column =5,4  0.000000  0.000000e+00  0.000000  0.000000e+00
+row,column =4,4  0.331983  0.000000e+00  0.000000  0.000000e+00
+row,column =4,5  0.000000  0.000000e+00  0.000000  0.000000e+00
+row,column =3,5  0.000000  0.000000e+00  0.276714  0.000000e+00
+row,column =2,5  0.000000 -6.693502e-02 -0.375858  0.000000e+00
+row,column =1,5  0.000000  0.000000e+00  0.000000  1.346908e-03
+row,column =4,3 -0.215234 -1.270933e-01 -0.092651  4.875784e-02
+row,column =5,5  0.000000  0.000000e+00  0.000000  0.000000e+00
+
+
